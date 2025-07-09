@@ -7,8 +7,8 @@ from Autoencoder import Autoencoder, guardar_autoencoder, cargar_autoencoder
 
 
 """
-Pasos proximo dia(cuando arregle lo de nans):
-- Tal vez añadir un test de rendimiento?
+Pasos proximo dia:
+- Añadir un test de rendimiento
 - Decidir cuales son las funciones de activacion mas adeccuadas
 - Definir una buena estructura de autoencoder y entrenar
 - Crear un primer autoencoder y ver como funciona el encoder
@@ -21,7 +21,7 @@ archivo_encod = r"redes_disponibles\encoder_prueba.json"
 archivo_decod = r"redes_disponibles\decoder_prueba.json"
 archivo_autoencoder = r"redes_disponibles\autoencoder_prueba.json"
 
-train_autoencoder = True
+train_autoencoder = False
 
 save_autoencoder = True
 save_decoder = True
