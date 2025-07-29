@@ -18,7 +18,7 @@ Parámetros principales:
 El script está pensado para ser ejecutado como programa principal (__main__), mostrando los resultados de la evaluación por consola.
 """
 from MLP import MLP, guardar_red, cargar_red
-from procesar_datos_entrenamiento import  Xs_test_def , Ys_test_def, nombre_set_test
+from proc_datos_entrenamiento import  Xs_test_def , Ys_test_def, nombre_set_test
 
 
 ## Funciones relevantes ##
