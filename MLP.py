@@ -119,8 +119,11 @@ class MLP:
     El método __call__ permite pasar una entrada por toda la red.
     """
     def __init__(self, 
-                nin : int, nout : int, estructura : list, 
-                f_act_salida : callable=None, f_act_oculta : callable=None)  :
+                 nin : int, 
+                 nout : int, 
+                 estructura : list, 
+                 f_act_salida : callable=None, 
+                 f_act_oculta : callable=None)  :
         # Estructura: lista que indica el número de neuronas por capa oculta
         sz = [nin] + estructura + [nout]
         self.layers = [Layer(sz[i], sz[i+1], f_act_oculta) for i in range(len(sz) - 1)]

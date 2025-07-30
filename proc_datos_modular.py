@@ -21,7 +21,7 @@ nombre_set_test = "datasets/roster_hawks_pergame_25.csv"
 
 ## Parametros a ajustar ##
 
-hacer_prints = True 
+hacer_prints = False 
 modo_autoencoder = True # El autoencoder usara entrada=salida
 
 hay_fila_totales_entrenamiento = False
@@ -32,7 +32,7 @@ quitar_ruido_test = False
 modos_posibles =["completo", "solo_volumen", "eficiencia_pura", "reducido"]
 modo_columnas = "solo_volumen"
 
-umbral_partidos = 10 #min partidos para filtrar ruido
+umbral_partidos = 10 # min partidos para filtrar ruido
 umbral_minutos = 10  # min minutos para filtrar ruido
 
 normalizar_datos = True
@@ -53,6 +53,11 @@ def procesar_datos(
     hay_fila_totales_test=True,
     quitar_ruido_test=False
 ):
+    #----------------------------- AVISOS -----------------------------
+    if modo_autoencoder:
+        print("\nAVISO: se estan procesando datos para entrenar un autoencoder.\n")
+    else:
+        print("\nAVISO: se estan procesando datos para entrenar un MLP.\n")
     # ------------------- CONFIGURACIÓN DE COLUMNAS -------------------
     column_sets = {
         "completo": [
@@ -176,14 +181,14 @@ def procesar_datos(
 
 Xs_entrenamiento_def, Xs_test_def, Ys_entrenamiento_def, Ys_test_def = procesar_datos(  nombre_set_entrenamiento,
                                                                                         nombre_set_test,
-                                                                                        modo_columnas="solo_volumen",
-                                                                                        modo_normalizacion="zscore",
-                                                                                        normalizar_datos=True,
-                                                                                        modo_autoencoder=False,
-                                                                                        hacer_prints=False,
-                                                                                        umbral_partidos=10,
-                                                                                        umbral_minutos=10,
-                                                                                        hay_fila_totales_entrenamiento=False,
-                                                                                        hay_fila_totales_test=True,
-                                                                                        quitar_ruido_test=False
+                                                                                        modo_columnas,
+                                                                                        modo_normalizacion,
+                                                                                        normalizar_datos,
+                                                                                        modo_autoencoder,
+                                                                                        hacer_prints,
+                                                                                        umbral_partidos,
+                                                                                        umbral_minutos,
+                                                                                        hay_fila_totales_entrenamiento,
+                                                                                        hay_fila_totales_test,
+                                                                                        quitar_ruido_test
                                                                                     )

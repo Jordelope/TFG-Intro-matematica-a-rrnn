@@ -102,19 +102,19 @@ def cargar_autoencoder(archivo : str):
     f_map = {"relu": F.relu, "sigmoid": torch.sigmoid, "tanh": torch.tanh, "softmax": lambda x: F.softmax(x, dim=0), None: None}
 
     encoder = MLP(
-        input_sz=data["estructura_encoder"][0],
-        out_sz=data["estructura_encoder"][-1],
+        nin=data["estructura_encoder"][0],
+        nout=data["estructura_encoder"][-1],
         estructura=data["estructura_encoder"][1:-1],
-        f_a_salida = f_map[data["f_salida_encoder"]],
-        f_a_oculta=f_map[data["f_oculta_encoder"]]
+        f_act_salida = f_map[data["f_salida_encoder"]],
+        f_act_oculta=f_map[data["f_oculta_encoder"]]
     )
 
     decoder = MLP(
-        input_sz=data["estructura_decoder"][0],
-        out_sz=data["estructura_decoder"][-1],
+        nin=data["estructura_decoder"][0],
+        nout=data["estructura_decoder"][-1],
         estructura=data["estructura_decoder"][1:-1],
-        f_a_salida = f_map[data["f_salida_decoder"]],
-        f_a_oculta=f_map[data["f_oculta_decoder"]]
+        f_act_salida = f_map[data["f_salida_decoder"]],
+        f_act_oculta=f_map[data["f_oculta_decoder"]]
     )
 
     for p, w in zip(encoder.parameters() + decoder.parameters(), data["pesos"]):

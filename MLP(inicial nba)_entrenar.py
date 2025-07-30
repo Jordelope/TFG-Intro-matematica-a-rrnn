@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 import random
-from MLP import MLP, guardar_red, cargar_red
+from MLP import MLP, guardar_MLP, cargar_MLP
 from proc_datos_entrenamiento import Xs_entrenamiento_def, Xs_test_def, Ys_entrenamiento_def, Ys_test_def
 
 
@@ -48,7 +48,7 @@ pos_test = [decodificar_pos(y) for y in Ys_test] # Las posiciones reales
 if __name__ == "__main__":
 
     print(f"\nSe va entrenar el modelo '{nombre_archivo_red}'.")
-    NN = cargar_red(nombre_archivo_red)
+    NN = cargar_MLP(nombre_archivo_red)
 
 
     if  save_after_training:
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     ## Actualizamos la red en su archivo original ##
     if save_after_training:
         if loss_final < init_loss or override_guardado:
-            guardar_red(NN,nombre_archivo_red)
+            guardar_MLP(NN,nombre_archivo_red)
         else:
             print( f"El error de la red '{nombre_archivo_red}' sobre el test no ha mejorarado y por tanto no la actualizamos.\n")
     else:

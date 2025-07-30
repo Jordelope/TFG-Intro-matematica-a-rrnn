@@ -51,8 +51,9 @@ batch_sz = 8  # Tamaño del batch (por defecto, todo el dataset)
 loss_f = F.mse_loss # Función de pérdida
 
 
-## Elegimos los datos de entrenamiento ##
+## DATOS de entrenamiento ##
 xs = Xs_entrenamiento_def
+ys = Ys_entrenamiento_def
 
 
 if __name__ == "__main__":
