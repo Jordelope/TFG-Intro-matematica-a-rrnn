@@ -58,9 +58,10 @@ if __name__ == "__main__":
         print(f"\nAVISO: La red '{nombre_archivo_red}' NO se va a guardar.")
 
 
-    ## Calculamos error inicial sobre el test ##
-    pred_test_init = [NN(x) for x in Xs_test]
-    init_loss = sum( loss_f(yout, ytrue) for yout,ytrue in zip(pred_test_init, Ys_test) ) / len(Ys_test) 
+    ## ERROR INICIAL sobre el test ##
+    with torch.no_grad():
+        pred_test_init = [NN(x) for x in Xs_test]
+        init_loss = sum( loss_f(yout, ytrue) for yout,ytrue in zip(pred_test_init, Ys_test) ) / len(Ys_test) 
     print(f"\nLa red '{nombre_archivo_red}' tiene una perdida inicial sobre el set de entrenamiento: {init_loss}")
 
     ## ENTRENAMIENTO ##
@@ -69,8 +70,9 @@ if __name__ == "__main__":
     
     
     ## ERROR FINAL sobre el test ##
-    pred_test_fin = [NN(x) for x in Xs_test]
-    loss_final = sum( F.cross_entropy(yout, ytrue) for yout,ytrue in zip(pred_test_fin, Ys_test) ) / len(Ys_train) 
+    with torch.no_grad():
+        pred_test_fin = [NN(x) for x in Xs_test]
+        loss_final = sum( F.cross_entropy(yout, ytrue) for yout,ytrue in zip(pred_test_fin, Ys_test) ) / len(Ys_train) 
     print(f"\nLa red '{nombre_archivo_red}' tiene una perdida final sobre el test: {loss_final}")
 
 
