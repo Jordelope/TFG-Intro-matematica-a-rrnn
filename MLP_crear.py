@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
         ## ENTRENAMIENTO ##
         print(f"\nIniciamos entrenamiento de {stp_n} pasos de la red '{nombre_archivo_red}'.\n")
-        NN.train_model(Xs_entrenamiento_def, Ys_entrenamiento_def, stp_n, stp_sz, F.cross_entropy, batch_sz)
+        NN.train_model(Xs_entrenamiento_def, Ys_entrenamiento_def, stp_n, stp_sz, loss_f, batch_sz)
 
         ## ERROR FINAL sobre el test ##
         with torch.no_grad():
