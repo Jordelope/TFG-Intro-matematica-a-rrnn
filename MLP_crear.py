@@ -29,17 +29,6 @@ El script está pensado para ser ejecutado como programa principal (__main__), m
 """
 ## Funciones relevantes ##
 
-def decodificar_pos(xs):
-    """
-    Decodifica la posición predicha a partir de un vector de salida one-hot.
-    Devuelve el nombre de la posición correspondiente (PG, SG, SF, PF, C).
-    Si la entrada es None, devuelve 'UNKNOWN'.
-    """
-    posiciones = ["PG", "SG", "SF", "PF", "C"]
-    if xs is None:
-        return "UNKNOWN"
-    return posiciones[xs.argmax().item()]
-
 
 ## Cargamos los datos de entrenamiento ##
 xs = Xs_entrenamiento_def
@@ -71,11 +60,9 @@ NN = MLP(input_sz, out_sz, estructura, f_a_salida, f_a_oculta)
 
 
 ## Establecemos el test ## 
-
-# Cargamos los datos de test y decodificamos las posiciones reales (Para el problema de predecir posicion jugador nba)
 test_xs = Xs_test_def
 test_ys = Ys_test_def
-test_result_pos = [decodificar_pos(y) for y in test_ys]  # Las posiciones reales
+
 
 #-------------------------------------------------------------------------------------------------------------------------------
 
@@ -96,23 +83,22 @@ if __name__ == "__main__":
 
     # Entrenamiento de la red
     if entrenar_nueva_red:
+
+        ## ERROR INICIAL sobre el test ##
+        with torch.no_grad():
+            pred_test_init = [NN(x) for x in test_xs]
+            loss_init = sum( loss_f(yout, ytrue) for yout,ytrue in zip(pred_test_init, test_ys) ) / len(test_ys) 
+        print(f"\nLa red '{nombre_archivo_red}' tiene una perdida inicial sobre el test: {loss_init}")
+
+        ## ENTRENAMIENTO ##
         print(f"\nIniciamos entrenamiento de {stp_n} pasos de la red '{nombre_archivo_red}'.\n")
         NN.train_model(Xs_entrenamiento_def, Ys_entrenamiento_def, stp_n, stp_sz, F.cross_entropy, batch_sz)
 
-        # Evaluación sobre el conjunto de test
-        test_pred_fin = [NN(x) for x in test_xs]
-        test_pred_fin_pos = [decodificar_pos(x) for x in test_pred_fin]
-
-        cont_buenos_final = 0
-        for i in range(len(test_pred_fin_pos)):
-            if test_pred_fin_pos[i] == test_result_pos[i]:
-                cont_buenos_final += 1
-        accuracy_fin = cont_buenos_final / len(test_result_pos)
-
-        print(f"La red sobre el test dice: \n{test_pred_fin_pos}")
-        print(f"Deberia dar: \n{test_result_pos}")
-        print(f"La red ha acertado {cont_buenos_final} / {len(test_pred_fin)} despues del entrenamiento.")
-        print(f"Precisión final en test: {accuracy_fin*100:.2f}%\n")
+        ## ERROR FINAL sobre el test ##
+        with torch.no_grad():
+            pred_test_fin = [NN(x) for x in test_xs]
+            loss_final = sum( loss_f(yout, ytrue) for yout,ytrue in zip(pred_test_fin, test_ys) ) / len(test_ys) 
+        print(f"\nLa red '{nombre_archivo_red}' tiene una perdida final sobre el test: {loss_final}")
 
     # Guardado de la red
     if save_new_NN:
