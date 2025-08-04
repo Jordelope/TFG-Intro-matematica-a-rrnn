@@ -158,10 +158,10 @@ def procesar_datos(
         y_test = [mapping_pos.get(pos) for pos in pos_test]
 
         # Limpieza de None
-        cleaned = [(x, y) for x, y in zip(X_train, y_train) if y is not None]
-        X_train, y_train = zip(*cleaned)
-        cleaned = [(x, y) for x, y in zip(X_test, y_test) if y is not None]
-        X_test, y_test = zip(*cleaned)
+        cleaned_train = [(x, y) for x, y in zip(X_train, y_train) if y is not None]
+        X_train, y_train = zip(*cleaned_train)
+        cleaned_test = [(x, y) for x, y in zip(X_test, y_test) if y is not None]
+        X_test, y_test = zip(*cleaned_test)
     else:
         y_train = X_train
         y_test = X_test
@@ -179,7 +179,7 @@ def procesar_datos(
     return X_train_tensor, Y_train_tensor, X_test_tensor, Y_test_tensor
 
 
-Xs_entrenamiento_def, Xs_test_def, Ys_entrenamiento_def, Ys_test_def = procesar_datos(  nombre_set_entrenamiento,
+Xs_entrenamiento_def, Ys_entrenamiento_def, Xs_test_def, Ys_test_def = procesar_datos(  nombre_set_entrenamiento,
                                                                                         nombre_set_test,
                                                                                         modo_columnas,
                                                                                         modo_normalizacion,
