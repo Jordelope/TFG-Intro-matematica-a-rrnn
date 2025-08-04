@@ -35,7 +35,7 @@ xs = Xs_entrenamiento_def
 ys = Ys_entrenamiento_def
 
 
-## Hiperparámetros de entrenamiento ##
+## HIPERPARAMETROS de entrenamiento ##
 stp_n = 1000  # Número de pasos de entrenamiento
 stp_sz = 0.25 # Tamaño del paso (learning rate)
 batch_sz = len(xs)  # Tamaño del batch (por defecto, todo el dataset)
@@ -43,7 +43,7 @@ batch_sz = len(xs)  # Tamaño del batch (por defecto, todo el dataset)
 loss_f = F.cross_entropy # Función de pérdida
 
 
-## Definición de la arquitectura de la red ##
+## ARQUITECTURA de la red ##
 input_sz = len(xs[0])      # Número de entradas
 out_sz = len(ys[0])        # Número de salidas
 estructura = [18, 18]      # Capas ocultas
@@ -51,7 +51,7 @@ f_a_salida = None          # Función de activación de salida (None = lineal o 
 f_a_oculta = None          # Función de activación oculta (None = por defecto en MLP)
 nombre_archivo_red = r"redes_disponibles\patata.json"  # Archivo donde se guarda la red
 
-# Flags de control
+## OPCIONES GUARDADO ##
 save_new_NN = True         # ¿Guardar la red tras crearla?
 entrenar_nueva_red = False # ¿Entrenar la red tras crearla?
 
