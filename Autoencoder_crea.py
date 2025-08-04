@@ -17,9 +17,9 @@ Pasos proximo dia:
 
 ## NOMBRE archivos de MLP (si ya los tenemos) y OPCIONES de entrenado y guardado ##
 existen_MLP = False
-archivo_encod = r"redes_disponibles\encoder_prueba.json"
-archivo_decod = r"redes_disponibles\decoder_prueba.json"
-archivo_autoencoder = r"redes_disponibles\autoencoder_prueba.json"
+archivo_encod = r"redes_disponibles\pruebaVisual_dim3_encod.json"
+archivo_decod = r"redes_disponibles\pruebaVisual_dim3_decod.json"
+archivo_autoencoder = r"redes_disponibles\pruebaVisual_dim3_autoencod.json"
 
 train_autoencoder = False
 
@@ -31,7 +31,7 @@ save_encoder = True
 ## ESTRUCTURA autoencoder (si no tenemos los MLP) ##
 
 input_sz = len(Xs_entrenamiento_def[0])            # Número de entradas
-lat_spc_dim = 8                  # Dimension espacio latente(salida encoder, entrada decoder)
+lat_spc_dim = 3                  # Dimension espacio latente(salida encoder, entrada decoder)
 
 estructura_encod = [36, 18 , 10]      # Capas ocultas encoder
 estructura_decod = [10, 18, 36 ]      # Capas ocultas decoder
