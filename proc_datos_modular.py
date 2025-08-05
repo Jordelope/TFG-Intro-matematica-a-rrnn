@@ -192,3 +192,12 @@ Xs_entrenamiento_def, Ys_entrenamiento_def, Xs_test_def, Ys_test_def = procesar_
                                                                                         hay_fila_totales_test,
                                                                                         quitar_ruido_test
                                                                                     )
+
+
+
+"""
+POSIBLES MEJORAS: 
+-> AÑADIR ETIQUETADO (PARA ENTRENAMIENTO Y/O VISUALIZACION) YA SEA POR POSICIONES O OTRO TIPO DE CLASIFICACIO
+-> PUEDEN SER INTERESANTES LOS DATOS DE ALTURA Y WINGSPAN (DICEN MUCHO DE UN JUGADOR)
+
+"""
