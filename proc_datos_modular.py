@@ -19,9 +19,10 @@ datasets = ["datasets/nba_pergame_24y25.csv",
 nombre_set_entrenamiento = "datasets/nba_pergame_24_full.csv"
 nombre_set_test = "datasets/roster_hawks_pergame_25.csv"
 
-## Parametros a ajustar ##
+## PARAMETROS a ajustar ##
 
-hacer_prints = False 
+hacer_prints = False
+
 modo_autoencoder = True # El autoencoder usara entrada=salida
 
 hay_fila_totales_entrenamiento = False
@@ -39,10 +40,14 @@ normalizar_datos = True
 modos_norm_posibles = ["zscore", "minmax"]
 modo_normalizacion = "zscore"
 
+modos_etiquetado = ["posicion"]
+modo_etiquetado = "posicion"
+
 def procesar_datos(
     nombre_set_entrenamiento,
     nombre_set_test,
     modo_columnas="solo_volumen",
+    modo_etiquetado = None,
     modo_normalizacion="zscore",
     normalizar_datos=True,
     modo_autoencoder=False,
@@ -58,6 +63,7 @@ def procesar_datos(
         print("\nAVISO: se estan procesando datos para entrenar un autoencoder.\n")
     else:
         print("\nAVISO: se estan procesando datos para entrenar un MLP.\n")
+
     # ------------------- CONFIGURACIÓN DE COLUMNAS -------------------
     column_sets = {
         "completo": [
@@ -175,20 +181,46 @@ def procesar_datos(
     # ------------------- CHECK FINAL -------------------
     if torch.isnan(X_train_tensor).any():
         print("[ERROR] X_train_tensor contiene NaNs")
+    
+    # ------------------- ETIQUETADO ---------------------
+    if modo_etiquetado is not None:
+        if modo_etiquetado == "posicion":
+            etiquetas_train = pd.read_csv(nombre_set_entrenamiento)["Pos"].tolist()
+            etiquetas_test = pd.read_csv(nombre_set_test)["Pos"].tolist()
+            if hay_fila_totales_entrenamiento:
+                etiquetas_train = etiquetas_train[:-1]
+            if hay_fila_totales_test:
+                etiquetas_test = etiquetas_test[:-1]
+        else:
+            etiquetas_train = None
+            etiquetas_test = None
+    else:
+        etiquetas_train = None
+        etiquetas_test = None
 
-    return X_train_tensor, Y_train_tensor, X_test_tensor, Y_test_tensor
+    return X_train_tensor, Y_train_tensor, X_test_tensor, Y_test_tensor, etiquetas_train, etiquetas_test
 
 
-Xs_entrenamiento_def, Ys_entrenamiento_def, Xs_test_def, Ys_test_def = procesar_datos(  nombre_set_entrenamiento,
-                                                                                        nombre_set_test,
-                                                                                        modo_columnas,
-                                                                                        modo_normalizacion,
-                                                                                        normalizar_datos,
-                                                                                        modo_autoencoder,
-                                                                                        hacer_prints,
-                                                                                        umbral_partidos,
-                                                                                        umbral_minutos,
-                                                                                        hay_fila_totales_entrenamiento,
-                                                                                        hay_fila_totales_test,
-                                                                                        quitar_ruido_test
-                                                                                    )
+Xs_entrenamiento_def, Ys_entrenamiento_def, Xs_test_def, Ys_test_def, etiquetas_entrenamiento, etiquetas_test = procesar_datos(     nombre_set_entrenamiento,
+                                                                                                                                    nombre_set_test,
+                                                                                                                                    modo_columnas,
+                                                                                                                                    modo_etiquetado,
+                                                                                                                                    modo_normalizacion,
+                                                                                                                                    normalizar_datos,
+                                                                                                                                    modo_autoencoder,
+                                                                                                                                    hacer_prints,
+                                                                                                                                    umbral_partidos,
+                                                                                                                                    umbral_minutos,
+                                                                                                                                    hay_fila_totales_entrenamiento,
+                                                                                                                                    hay_fila_totales_test,
+                                                                                                                                    quitar_ruido_test
+                                                                                                                                )
+
+
+
+"""
+POSIBLES MEJORAS: 
+-> AÑADIR ETIQUETADO (PARA ENTRENAMIENTO Y/O VISUALIZACION) YA SEA POR POSICIONES O OTRO TIPO DE CLASIFICACIO
+-> PUEDEN SER INTERESANTES LOS DATOS DE ALTURA Y WINGSPAN (DICEN MUCHO DE UN JUGADOR)
+
+"""
