@@ -1,5 +1,4 @@
 import torch
-import torch.nn.functional as F
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -40,7 +39,7 @@ def visual(autoencoder_nombre : str,
 
     if len(data_codificado[0]) > dim:
         
-        print("La función no esta aun preparada para llevar a cabo un reduccion de la dimensionalidad. \nPor favor introduzca una dimension que coincide con la del espacio latente de su autoencoder")
+        print("La función no esta preparada AUN para llevar a cabo un reduccion de la dimensionalidad. \nPor favor introduzca una dimension que coincide con la del espacio latente de su autoencoder")
 
 
     elif dim == 2: # añadir etiquetas y titulo grafico
@@ -104,7 +103,7 @@ def visual(autoencoder_nombre : str,
         plt.show()
     
     else:
-        print("La función no esta aun preparada para representar en dimensiones mayores que 3")
+        print("La función no puede representar en dimensiones mayores que 3")
 
 
 
