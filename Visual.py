@@ -62,11 +62,14 @@ def visual(autoencoder_nombre : str,
                                               label=clase)
                                               )
                 ax.legend(handles=handles, title="Clases", loc="best")
-            plt.show()
-
+            
         else:
             ax.scatter(data_x, data_y)
-            plt.show()
+        
+        ax.set_xlabel("Latente 1")
+        ax.set_ylabel("Latente 2")
+        ax.set_title(titulo_graf)
+        plt.show()
 
 
     elif dim == 3: # añadir etiquetas y titulo grafico
@@ -90,11 +93,16 @@ def visual(autoencoder_nombre : str,
                                               label=clase)
                                               )
                 ax.legend(handles=handles, title="Clases", loc="best")
-            plt.show()
+        
         else:
             ax.scatter(data_x , data_y, data_z)
-            plt.show()
-
+        
+        ax.set_xlabel("Latente 1")
+        ax.set_ylabel("Latente 2")
+        ax.set_zlabel("Latente 3")
+        ax.set_title(titulo_graf)
+        plt.show()
+    
     else:
         print("La función no esta aun preparada para representar en dimensiones mayores que 3")
 
@@ -109,9 +117,10 @@ autoencoder_dim2 = r"redes_disponibles\pruebaVisual_dim2_autoencod.json"
 autoencoder_dim3 = r"redes_disponibles\pruebaVisual_dim3_autoencod.json"
 vectores = Xs_test_def
 etiquetas = etiquetas_test
+titulo ="PRUEBAS"
 
 if __name__ == "__main__":
     
-    visual(autoencoder_dim2,vectores,2,etiquetas)
-    visual(autoencoder_dim3,vectores,3,etiquetas)
+    visual(autoencoder_dim2,vectores,2,etiquetas,titulo)
+    visual(autoencoder_dim3,vectores,3,etiquetas,titulo)
 
