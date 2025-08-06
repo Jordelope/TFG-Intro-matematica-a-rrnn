@@ -53,13 +53,13 @@ def visual(autoencoder_nombre : str,
             if clases_name is not None:
                 handles = []
                 for i, clase in enumerate(clases_name):
-                    handles.append(plt.Line2D([0], [0], 
-                                              marker='o', 
-                                              color='w',
-                                              markerfacecolor=scatter.cmap(i), 
-                                              markersize=8,
-                                              label=clase)
-                                              )
+                    color = scatter.cmap(scatter.norm(i))
+                    handles.append(plt.Line2D([0], [0],
+                                            marker='o',
+                                            color='w',
+                                            markerfacecolor=color,
+                                            markersize=8,
+                                            label=clase))
                 ax.legend(handles=handles, title="Clases", loc="best")
             
         else:
@@ -84,13 +84,14 @@ def visual(autoencoder_nombre : str,
             if clases_name is not None:
                 handles = []
                 for i, clase in enumerate(clases_name):
-                    handles.append(plt.Line2D([0], [0], 
-                                              marker='o', 
-                                              color='w',
-                                              markerfacecolor=scatter.cmap(i), 
-                                              markersize=8,
-                                              label=clase)
-                                              )
+                    color = scatter.cmap(scatter.norm(i))
+                    handles.append(plt.Line2D([0], [0],
+                                            marker='o',
+                                            color='w',
+                                            markerfacecolor=color,
+                                            markersize=8,
+                                            label=clase))
+
                 ax.legend(handles=handles, title="Clases", loc="best")
         
         else:
@@ -122,4 +123,5 @@ if __name__ == "__main__":
     
     visual(autoencoder_dim2,vectores,2,etiquetas,titulo)
     visual(autoencoder_dim3,vectores,3,etiquetas,titulo)
+
 
