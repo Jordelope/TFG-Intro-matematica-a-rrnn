@@ -10,20 +10,20 @@ from proc_datos_modular import Xs_entrenamiento_def, Ys_entrenamiento_def, Xs_te
 
 ## DATOS de red a entrenar ##
 
-nombre_archivo_red = r"redes_disponibles\autoencoder_prueba.json"
+nombre_archivo_red = r"redes_disponibles\pruebaVisual_dim3_autoencod.json"
 
 
 ## OPCIONES de guardado ##
 
 save_after_training = True  # En caso de True: se guarda cuando mejora el error respecto 
-override_guardado = False   # En caso de True: se guarda aunque no mejore el error (si el anterior es True)
+override_guardado = True   # En caso de True: se guarda aunque no mejore el error (si el anterior es True)
 
 
 ## HIPERPARAMETROS de entrenamiento ##
 
-stp_n = 5     # Número de pasos de entrenamiento
-stp_sz = 0.001    # Tamaño del paso (learning rate)
-batch_sz = 8  # Tamaño del batch (por defecto si es None, todo el dataset)
+stp_n = 10000     # Número de pasos de entrenamiento
+stp_sz = 0.0005    # Tamaño del paso (learning rate)
+batch_sz = None  # Tamaño del batch (por defecto si es None, todo el dataset)
 
 loss_f = F.mse_loss # Función de pérdida
 
