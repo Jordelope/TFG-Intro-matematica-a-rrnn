@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 import random
 from MLP import MLP, cargar_MLP, guardar_MLP
-from proc_datos_modular import Xs_entrenamiento_def, Xs_test_def, Ys_entrenamiento_def, Ys_test_def
+from Procesamiento_datos_modular import Xs_entrenamiento_def, Xs_test_def, Ys_entrenamiento_def, Ys_test_def
 from Autoencoder import Autoencoder, guardar_autoencoder, cargar_autoencoder
 
 

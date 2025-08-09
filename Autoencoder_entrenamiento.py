@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 from Autoencoder import Autoencoder, cargar_autoencoder, guardar_autoencoder
-from proc_datos_modular import Xs_entrenamiento_def, Ys_entrenamiento_def, Xs_test_def, Ys_test_def
+from Procesamiento_datos_modular import Xs_entrenamiento_def, Ys_entrenamiento_def, Xs_test_def, Ys_test_def
 
 
 ## Funciones relevantes ##
