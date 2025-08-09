@@ -7,6 +7,8 @@ from Clasificador import Clasificador, guardar_classificador, cargar_classificad
 
 """
 
+(PENDIENTE REVISION Y PRUEBA)
+
 Crear un Clasificador a partir de un Autoencoder YA ENTRENADO. Clasificamos desde el espacio latente.
 
 """

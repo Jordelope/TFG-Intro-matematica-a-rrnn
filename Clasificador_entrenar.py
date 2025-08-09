@@ -6,6 +6,8 @@ from Autoencoder import Autoencoder, guardar_autoencoder, cargar_autoencoder
 from Clasificador import Clasificador, guardar_classificador, cargar_classificador
 
 """
+(PENDIENTE REVISION Y PRUEBA)
+
 Entrenar Clasificador. " opciones":
 -> El clasificador suelto (entrenamiento "habitual")
 -> El clasificador entero con el encoder (fine_tuning)
