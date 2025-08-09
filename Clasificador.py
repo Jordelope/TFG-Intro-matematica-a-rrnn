@@ -59,7 +59,8 @@ class Clasificador:
               loss_f : callable = F.cross_entropy,
               batch_size : int = None):
         ## NO IMPORTANTE, COMPLETAR MAS ADELANTE ##
-        pass
+        print("Aun no esta operativo. No se ha entrenado el modelo")
+        
         
 def guardar_classificador(clasificador: Clasificador, archivo: str):
     """
