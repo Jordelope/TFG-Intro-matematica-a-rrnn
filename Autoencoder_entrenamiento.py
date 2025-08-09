@@ -1,5 +1,6 @@
 import torch
 import torch.nn.functional as F
+from MLP import MLP, cargar_MLP, guardar_MLP
 from Autoencoder import Autoencoder, cargar_autoencoder, guardar_autoencoder
 from Procesamiento_datos_modular import Xs_entrenamiento_def, Ys_entrenamiento_def, Xs_test_def, Ys_test_def
 
@@ -10,14 +11,16 @@ from Procesamiento_datos_modular import Xs_entrenamiento_def, Ys_entrenamiento_d
 
 ## DATOS de red a entrenar ##
 
-nombre_archivo_red = r"redes_disponibles\pruebaVisual_dim3_autoencod.json"
-
+nombre_archivo_autoencoder = r"redes_disponibles\pruebaVisual_dim3_autoencod.json"
+nombre_archivo_encoder = r"redes_disponibles\pruebaVisual_dim3_encod.json"
+nombre_archivo_decoder =r"redes_disponibles\pruebaVisual_dim3_decod.json"
 
 ## OPCIONES de guardado ##
 
 save_after_training = True  # En caso de True: se guarda cuando mejora el error respecto 
 override_guardado = True   # En caso de True: se guarda aunque no mejore el error (si el anterior es True)
 
+sobreescribir_submodelos = save_after_training
 
 ## HIPERPARAMETROS de entrenamiento ##
 
@@ -43,28 +46,28 @@ ys_test = Ys_test_def
 if __name__ == "__main__":
     
     ## CARGAR red ##
-    print(f"\nSe va entrenar el modelo '{nombre_archivo_red}'.")
-    NN = cargar_autoencoder(nombre_archivo_red)
+    print(f"\nSe va entrenar el modelo '{nombre_archivo_autoencoder}'.")
+    NN = cargar_autoencoder(nombre_archivo_autoencoder)
 
     ## AVISOS ##
     if  save_after_training:
         if override_guardado:
-            print(f"\nAVISO: La red '{nombre_archivo_red}' se va a guardar aunque empeore el error.")
+            print(f"\nAVISO: La red '{nombre_archivo_autoencoder}' se va a guardar aunque empeore el error.")
         else:
-            print(f"\nAVISO: La red '{nombre_archivo_red}' se va a guardar.")
+            print(f"\nAVISO: La red '{nombre_archivo_autoencoder}' se va a guardar.")
     else:
-        print(f"\nAVISO: La red '{nombre_archivo_red}' no se va a guardar.")
+        print(f"\nAVISO: La red '{nombre_archivo_autoencoder}' no se va a guardar.")
 
 
     ## ERROR INICIAL sobre el test ##
     with torch.no_grad():
         pred_test_init = [NN(x) for x in xs_test]
         loss_init = sum( loss_f(yout, ytrue) for yout,ytrue in zip(pred_test_init, ys_test) ) / len(ys_test) 
-    print(f"\nLa red '{nombre_archivo_red}' tiene una perdida inicial sobre el test: {loss_init}")
+    print(f"\nLa red '{nombre_archivo_autoencoder}' tiene una perdida inicial sobre el test: {loss_init}")
 
 
     ## ENTRENAMIENTO ##
-    print(f"\nIniciamos entrenamiento de {stp_n} pasos de la red '{nombre_archivo_red}'.\n") 
+    print(f"\nIniciamos entrenamiento de {stp_n} pasos de la red '{nombre_archivo_autoencoder}'.\n") 
     NN.train_model(xs_train,stp_n,stp_sz,loss_f,batch_sz)
 
 
@@ -72,15 +75,18 @@ if __name__ == "__main__":
     with torch.no_grad():
         pred_test_fin = [NN(x) for x in xs_test]
         loss_final = sum( loss_f(yout, ytrue) for yout,ytrue in zip(pred_test_fin, ys_test) ) / len(ys_test) 
-    print(f"\nLa red '{nombre_archivo_red}' tiene una perdida final sobre el test: {loss_final}")
+    print(f"\nLa red '{nombre_archivo_autoencoder}' tiene una perdida final sobre el test: {loss_final}")
 
     
     ## GUARDADO de la red en su archivo original ##
     if save_after_training:
         if loss_final < loss_init or override_guardado:
-            print( f"El error de la red '{nombre_archivo_red}' sobre el test ha mejorarado y por tanto la actualizamos.\n")
-            guardar_autoencoder(NN,nombre_archivo_red)
+            print( f"El error de la red '{nombre_archivo_autoencoder}' sobre el test ha mejorarado y por tanto la actualizamos.\n")
+            guardar_autoencoder(NN,nombre_archivo_autoencoder)
+            if sobreescribir_submodelos:
+                guardar_MLP(NN.encoder,nombre_archivo_encoder)
+                guardar_MLP(NN.decoder,nombre_archivo_decoder)
         else:
-            print( f"El error de la red '{nombre_archivo_red}' sobre el test no ha mejorarado y por tanto NO la actualizamos.\n")
+            print( f"El error de la red '{nombre_archivo_autoencoder}' sobre el test no ha mejorarado y por tanto NO la actualizamos.\n")
     else:
-        print(f"Se ha decidido NO guardar la actualizacion de la red '{nombre_archivo_red}'\n.")
+        print(f"Se ha decidido NO guardar la actualizacion de la red '{nombre_archivo_autoencoder}'\n.")
