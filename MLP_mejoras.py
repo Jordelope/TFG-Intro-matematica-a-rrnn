@@ -137,8 +137,9 @@ class MLP:
                  f_act_oculta : callable=None)  :
         # Estructura: lista que indica el número de neuronas por capa oculta
         sz = [nin] + estructura + [nout]
+        self.dim_entrada = nin
+        self.dim_salida  = nout
         self.layers = [Layer(sz[i], sz[i+1], f_act_oculta) for i in range(len(sz) - 1)]
-
         self.f_act_salida = f_act_salida
         self.f_act_oculta = f_act_oculta
 
