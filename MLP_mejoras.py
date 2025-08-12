@@ -55,6 +55,15 @@ def crear_tensor(valor):
     """
     return torch.tensor(valor, dtype=torch.float32, requires_grad=True)
 
+# Diccionario de funciones de activación
+activations = {
+    "relu": torch.relu,
+    "tanh": torch.tanh,
+    "sigmoid": torch.sigmoid,
+    None: lambda x: x  # Sin activación
+}
+
+
 ## Neurona individual ##
 
 class Neuron:
@@ -68,14 +77,14 @@ class Neuron:
       - f_act: función de activación
     El método __call__ permite usar la neurona como una función: y = f_act(w·x + b)
     """
-    def __init__(self, nin : int, f_act : callable=None):
-        self.w = crear_tensor([random.uniform(-0.1,0.1) for _ in range(nin)])
-        self.b = crear_tensor(random.uniform(-0.1,0.1))
+    def __init__(self, dim_in : int, f_act : callable=None):
+        self.w = torch.randn(dim_in, dtype=torch.float32) / dim_in**0.5
+        self.b = torch.randn(1, dtype=torch.float32)
         self.f_act = f_act
 
     def parameters(self):
         """Devuelve los parámetros entrenables de la neurona (pesos y sesgo)."""
-        return [self.w, self.b]
+        return [self.w, self.b] # ¿seguro?
 
     def __call__(self, x):
         """
@@ -83,7 +92,7 @@ class Neuron:
         torch.dot(self.w, x): producto escalar entre pesos y entrada.
         self.f_act: función de activación aplicada al resultado.
         """
-        act = torch.dot(self.w, x) + self.b
+        act = x @ self.w + self.b
         if self.f_act is None:
             return act
         else:
@@ -94,26 +103,35 @@ class Neuron:
 class Layer:
     """
     Clase que representa una capa de neuronas.
-    - nin: número de entradas por neurona.
-    - nout: número de neuronas en la capa.
+    - dim_in: número de entradas por neurona (dimension de la entrada).
+    - dim_out: número de neuronas en la capa (dimensión de la salida).
     - f_act: función de activación para todas las neuronas de la capa.
-    Contiene una lista de objetos Neuron.
+    Contiene una lista de objetos Neuron.    ELIMINAR LISTA NEURONAS
     """
-    def __init__(self, nin : int, nout : int, f_act : callable=None):
-        self.neurons = [Neuron(nin, f_act) for _ in range(nout)]
+    def __init__(self, dim_in : int, dim_out : int, f_act : callable=None):
+        self.neurons = [Neuron(dim_in, f_act) for _ in range(dim_out)] # Esto y la clase neurona se vuelven inutiles vectorizando con pytorch
+        # Vectorizamos pesos: matriz [nin, nout]
+        self.w = torch.randn(dim_in, dim_out, dtype=torch.float32) / dim_in**0.5 # ¿ PREGUNTAR PQ DE ESTA FORMA Y NO  SIMPLEMENTE ENTRE (0,1) ? (MEJOR (0,1) CREO YO)
+        self.b = torch.randn(dim_out, dtype=torch.float32) # ¿ me interesa mas sesgos 0 o aleatorios? (si aleatorio mejor (0,1))
+        self.f_act = f_act
 
     def parameters(self):
-        """Devuelve todos los parámetros entrenables de la capa (de todas sus neuronas)."""
-        return [p for neuron in self.neurons for p in neuron.parameters()]
+        """Devuelve todos los parámetros entrenables de la capa."""
+        # return [p for neuron in self.neurons for p in neuron.parameters()]   ## Version original ##
+        return [self.w, self.b] # <- ¿SEGURO?
 
     def __call__(self, x):
         """
         Calcula la salida de la capa para una entrada x.
-        Devuelve un tensor con la salida de cada neurona.
-        Si la capa tiene una sola neurona, devuelve un escalar.
+        Devuelve un tensor con la salidas.
         """
-        outs = [neuron(x) for neuron in self.neurons]
-        return outs[0] if len(outs) == 1 else torch.stack(outs)
+        act = x @ self.w +self.b
+        if self.f_act is None:
+            return act     ## ¿ util poner act[0] if len(act) == 1 else torch.stack(act) ? o no es necesario ? ##
+        else: 
+            return self.f_act(act)
+        ## ¿HAY QUE PONER CASO ESPECIAL PARA F.SOFTMAX U OTRAS FUNCIONES DE ACTIVACION ? CREO QUE SI ##
+         
 
 ## Red neuronal(perceptron multicapa) compuesta por varias capas ##
 
@@ -122,26 +140,31 @@ class MLP:
     Clase que representa un perceptrón multicapa (MLP).
     - nin: número de entradas.
     - nout: número de salidas.
-    - estructura: lista con el número de neuronas en cada capa oculta.
-    - f_act_salida: función de activación para la capa de salida (por defecto softmax).
-    - f_act_oculta: función de activación para las capas ocultas (por defecto ReLU).
+    - estructura_oct: lista con el número de neuronas en cada capa oculta.
 
     La red se compone de varias capas (Layer), almacenadas en self.layers.
     El método __call__ permite pasar una entrada por toda la red.
     """
     def __init__(self, 
-                 nin : int, 
-                 nout : int, 
-                 estructura : list, 
-                 f_act_salida : callable=None, 
-                 f_act_oculta : callable=None)  :
-        # Estructura: lista que indica el número de neuronas por capa oculta
-        sz = [nin] + estructura + [nout]
-        self.dim_entrada = nin
-        self.dim_salida  = nout
-        self.layers = [Layer(sz[i], sz[i+1], f_act_oculta) for i in range(len(sz) - 1)]
-        self.f_act_salida = f_act_salida
-        self.f_act_oculta = f_act_oculta
+                 dim_in : int, 
+                 dim_out : int, 
+                 estructura_oct : list, 
+                 f_act_list : list=None)  :
+        """
+        - nin :  numero de entradas
+        - nout : numero de salidas
+        - estructura_oct :  lista con el número de neuronas en cada capa oculta.
+        - f_act_list: lista de funciones de activacion (debe tener lonitud = len(estructura_oct) + 1)  ¿ +1 o +2 ? (bastante seguro que 1)
+        """
+        if f_act_list is None:
+            f_act_list = [None for i in range( len(estructura_oct)+1 ) ]
+
+        dims = [dim_in] + estructura_oct + [dim_out]
+        self.dim_in = dim_in
+        self.dim_out  = dim_out
+        self.activaciones = f_act_list ## ¿ meter assert para garantizar longitud?
+        self.layers = [ Layer(dims[i], dims[i+1], f_act) for i,f_act in zip( range(len(dims) - 1) , self.activaciones) ]
+        
 
     def parameters(self):
         """Devuelve todos los parámetros entrenables de la red (de todas las capas)."""
@@ -150,22 +173,12 @@ class MLP:
     def __call__(self, x : torch.Tensor):
         """
         Propaga la entrada x a través de todas las capas de la red.
-        - Las capas ocultas usan la función de activación oculta.
-        - La última capa (salida) es lineal y luego se aplica la función de activación de salida (por defecto softmax).
         """
-        for layer in self.layers[:-1]:
+        ## Asserte de dim? o en enlayer mejor?
+        for layer in self.layers:
             x = layer(x)
-        # Última capa lineal (sin activación)
-        final_layer = self.layers[-1]
-        logits = [torch.dot(neuron.w, x) + neuron.b for neuron in final_layer.neurons]
-        logits = torch.stack(logits)
-        
-        if self.f_act_salida is None:
-            return logits
-        elif self.f_act_salida == F.softmax:
-            return self.f_act_salida(logits, dim=-1)
-        else:
-            return self.f_act_salida(logits)
+        return x
+
 
     def train_model(self, 
                     training_data : list, target_vector : list, 
@@ -200,7 +213,7 @@ class MLP:
                     if p.grad is not None:
                         p.grad.zero_()
 
-                ypred_batch = [self(x) for x in X_batch]
+                ypred_batch = [self(x) for x in X_batch]  ### ¿  SE PUEDE HACER SELF(BATCH) ? ###
                 loss = sum(loss_f(ypred, ytrue) for ypred, ytrue in zip(ypred_batch, Y_batch)) / len(ypred_batch)
                 epoch_loss += loss.item()
                 num_batches += 1
@@ -222,18 +235,18 @@ def guardar_MLP(red : MLP, archivo : str):
     - archivo: ruta del archivo destino.
     Se almacena:
       - estructura: lista con el número de neuronas por capa (incluye entrada y salida)
-      - f_salida, f_oculta: nombres de las funciones de activación
+      - activaciones: nombres de las funciones de activación
       - pesos: lista de todos los parámetros (pesos y sesgos) de la red
     """
     state = [p.detach().tolist() for p in red.parameters()]
-    estructura = [len(red.layers[0].neurons[0].w)] + [len(layer.neurons) for layer in red.layers]
+    estructura = [len(red.layers[0].neurons[0].w)] + [len(layer.neurons) for layer in red.layers]   ### AAAAAAAAAAQUIIIIII
+    estructura = [red.dim_in] + red.estructura_oct + [red.dim_out] #mejor asi?
     # Guardamos los nombres de las funciones de activación
-    f_salida = red.f_act_salida.__name__ if red.f_act_salida else None
-    f_oculta = red.f_act_oculta.__name__ if red.f_act_oculta else None
+    activaciones = [ f_act.__name__ if f_act else None for f_act in red.activaciones] ## ¿ESTA BIEN HECHA ESTA LISTA?
 
     import json
     with open(archivo, "w") as f:
-        json.dump({"estructura": estructura, "f_salida": f_salida, "f_oculta": f_oculta, "pesos": state}, f)
+        json.dump({"estructura": estructura, "activaciones": activaciones, "pesos": state}, f)
     print(f"Red guardada en '{archivo}'\n")
 
 def cargar_MLP(archivo : str):
@@ -260,15 +273,15 @@ def cargar_MLP(archivo : str):
         "log_softmax": F.log_softmax,
         None: None
     }
-    f_salida = nombre_a_func.get(data["f_salida"], None)
-    f_oculta = nombre_a_func.get(data.get("f_oculta"), None)
+    activaciones = [nombre_a_func.get(f_act, None) for f_act in data["activaciones"]]  ## REVISAR SI ESTA BIEN ESTA LISTA
 
-    nin = estructura[0]
-    nout = estructura[-1]
+    dim_in = estructura[0]
+    dim_out = estructura[-1]
     capas = estructura[1:-1]  # Estructura intermedia
 
-    red = MLP(nin, nout, capas, f_salida, f_oculta)
-    flat_params = [p for layer in red.layers for neuron in layer.neurons for p in neuron.parameters()]
+    red = MLP(dim_in, dim_out, capas, activaciones)
+    flat_params = [p for layer in red.layers for neuron in layer.neurons for p in neuron.parameters()]  ### AAAAAAQUIIIIIII
+    flat_params = [p for layer in red.layers for p in layer.parameters()] #revisar que esté bien ?
 
     for param, val in zip(flat_params, pesos):
         val_tensor = torch.tensor(val, dtype=torch.float32)
@@ -289,13 +302,13 @@ def cargar_MLP(archivo : str):
 #
 # Las funciones de activación y de pérdida utilizadas son las de torch.nn.functional (F), que operan sobre tensores y permiten el cálculo automático de gradientes.
 #
-# Las clases están relacionadas jerárquicamente: MLP -> Layer -> Neuron.
+# Las clases están relacionadas jerárquicamente: MLP -> Layer
 # Cada nivel encapsula el anterior, permitiendo construir redes de cualquier tamaño y profundidad.
 #
 # Para entrenar una red, se recomienda preparar los datos como listas de tensores de tipo float32.
 #
 # Ejemplo de uso:
-#   red = MLP(nin=10, nout=3, estructura=[5, 5])
+#   red = MLP(dim_in=10, dim_out=3, estructura=[5, 5])
 #   red.train_model(X_train, Y_train, n_steps=100, stp_sz=0.01)
 #   guardar_red(red, 'mi_red.json')
 #   red2 = cargar_red('mi_red.json')
