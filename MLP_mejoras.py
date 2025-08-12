@@ -160,6 +160,7 @@ class MLP:
             f_act_list = [None for i in range( len(estructura_oct)+1 ) ]
 
         dims = [dim_in] + estructura_oct + [dim_out]
+        self.dims = dims
         self.dim_in = dim_in
         self.dim_out  = dim_out
         self.activaciones = f_act_list ## ¿ meter assert para garantizar longitud?
@@ -240,7 +241,7 @@ def guardar_MLP(red : MLP, archivo : str):
     """
     state = [p.detach().tolist() for p in red.parameters()]
     estructura = [len(red.layers[0].neurons[0].w)] + [len(layer.neurons) for layer in red.layers]   ### AAAAAAAAAAQUIIIIII
-    estructura = [red.dim_in] + red.estructura_oct + [red.dim_out] #mejor asi?
+    estructura = red.dims #mejor asi?
     # Guardamos los nombres de las funciones de activación
     activaciones = [ f_act.__name__ if f_act else None for f_act in red.activaciones] ## ¿ESTA BIEN HECHA ESTA LISTA?
 
