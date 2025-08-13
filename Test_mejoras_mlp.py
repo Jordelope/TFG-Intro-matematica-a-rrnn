@@ -36,7 +36,7 @@ if __name__ == "__main__":
     segunda_pasada = NN2(dato)
     print(f"La red cargada sobre el dato da: {segunda_pasada}\n")
     
-    if primera_pasada.numpy().all() == segunda_pasada.numpy().all():
+    if primera_pasada.detach().numpy().all() == segunda_pasada.detach().numpy().all():
         print("Parece que todo va BIEN.")
     else:
         print("ALGO FALLA")
