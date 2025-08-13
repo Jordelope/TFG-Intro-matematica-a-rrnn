@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 import random
-from MLP import MLP, get_batches, guardar_MLP, cargar_MLP
+from MLP_mejoras import MLP, get_batches, guardar_MLP, cargar_MLP
 
 
 
@@ -12,7 +12,7 @@ Fichero para probar posibles mejoras sin modificar el original que funciona corr
 
 
 IDEA: Es el momento de quitarse las listas y pasar a Vectorización del forward para batch (usando ventajas de pytorch) ?
-
+    (En MLP esto)
 """
 
 class Autoencoder:
@@ -26,6 +26,7 @@ class Autoencoder:
         self.encoder = encoder
         self.decoder = decoder
         self.layers = encoder.layers + decoder.layers
+        self.dim_latente = self.encoder.dim_salida
     
     def parameters(self):
         return self.encoder.parameters() + self.decoder.parameters()
