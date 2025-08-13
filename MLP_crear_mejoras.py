@@ -18,43 +18,41 @@ Estructura general del script:
 - Permite guardar la red (estructura y pesos) en un archivo JSON para su posterior uso.
 - Incluye utilidades para decodificar la salida de la red y evaluar su precisión sobre el conjunto de test.
 
-Parámetros principales:
-- estructura: lista con el número de neuronas en cada capa oculta.
-- f_a_salida, f_a_oculta: funciones de activación para la salida y las capas ocultas.
-- stp_n, stp_sz, batch_sz: hiperparámetros de entrenamiento.
-- nombre_archivo_red: ruta donde se guarda la red entrenada.
-- save_new_NN, entrenar_nueva_red: flags para controlar el flujo del script.
-
-El script está pensado para ser ejecutado como programa principal (__main__), mostrando mensajes informativos sobre las acciones realizadas.
 """
 ## Funciones relevantes ##
 
 
-## ARQUITECTURA de la red ##
-input_sz = 3        # Dimension de entradas
-out_sz = 2          # Dimension de salidas
-estructura_oct = [4,5,6]     # Capas ocultas
-lista_activaciones = None         # Lista de activación oculta (None = [None,...,None])
-nombre_archivo_red = r"redes_disponibles\mejoras\prueba_mlp1.json"  # Archivo donde se guarda la red
-
-## OPCIONES ENTRENADO Y GUARDADO ##
-save_new_NN = True         # ¿Guardar la red tras crearla?
-entrenar_nueva_red = False # ¿Entrenar la red tras crearla?
 
 
-## CARGAMOS los datos de entrenamiento y test ##
-xs = Xs_entrenamiento_def
-ys = Ys_entrenamiento_def
-test_xs = Xs_test_def
-test_ys = Ys_test_def
+
+## ARQUITECTURA de la red ## (Prestar MUCHA ATENCION A FUNCIONES ACTIVACION)
+input_sz = len(Xs_entrenamiento_def[0])      # Número de entradas (asegurar que coincide con los datos que se va a usar)
+out_sz = len(Ys_entrenamiento_def[0])        # Número de salidas (asegurar que coincide con los datos que se va a usar)
+estructura_oct = [18, 18]  # Capas ocultas
+lista_act = None           # Lista de funciones de activación (asegurar compatible con estructura oct)
+                           #(None =[None,...,None] por defecto en MLP)
+
+nombre_archivo_red = r"redes_disponibles\mejoras\nuevo_mlp.json"  # Archivo donde se guarda la red
+
+## OPCIONES GUARDADO ##
+save_new_NN = False         # ¿Guardar la red tras crearla?
+entrenar_nueva_red = True # ¿Entrenar la red tras crearla?
+
 
 ## HIPERPARAMETROS de entrenamiento ##
-stp_n = 0  # Número de pasos de entrenamiento
+stp_n = 1  # Número de pasos de entrenamiento
 stp_sz = 0.25 # Tamaño del paso (learning rate)
-batch_sz = len(xs)  # Tamaño del batch (por defecto, todo el dataset)
+batch_sz = None  # Tamaño del batch (None = por defecto, todo el dataset)
 
-loss_f = F.cross_entropy # Función de pérdida
+loss_f = F.mse_loss # Función de pérdida
 
+
+## Cargamos los datos de entrenamiento ##
+xs = Xs_entrenamiento_def
+ys = Ys_entrenamiento_def
+## Establecemos el test ## 
+test_xs = Xs_test_def
+test_ys = Ys_test_def
 
 
 #-------------------------------------------------------------------------------------------------------------------------------
@@ -62,43 +60,41 @@ loss_f = F.cross_entropy # Función de pérdida
 
 
 if __name__ == "__main__":
-    
     # Instanciación de la red
-    NN = MLP(input_sz, out_sz, estructura_oct, lista_activaciones)
-
-    print(f"Hemos creado el modelo {nombre_archivo_red}.")
+    NN = MLP(input_sz, out_sz, estructura_oct, lista_act)
+    print(f"\nHemos creado la red {nombre_archivo_red}.\n")
 
     if save_new_NN:
-        print(f"\nAVISO: El modelo {nombre_archivo_red} se va a guardar.")
+        print(f"\nAVISO: La red {nombre_archivo_red} se va a guardar.\n")
     else:
-        print(f"\nAVISO: El modelo {nombre_archivo_red} no se va a guardar.")
+        print(f"\nAVISO: La red {nombre_archivo_red} no se va a guardar.\n")
 
     if entrenar_nueva_red:
-        print(f"\nAVISO: El modelo {nombre_archivo_red} se va a entrenar.")
+        print(f"AVISO: La red {nombre_archivo_red} se va a entrenar.\n")
     else:
-        print(f"\nAVISO: El modelo {nombre_archivo_red} no se va a entrenar.")
+        print(f"AVISO: La red {nombre_archivo_red} no se va a entrenar.\n")
 
     # Entrenamiento de la red
     if entrenar_nueva_red:
 
         ## ERROR INICIAL sobre el test ##
         with torch.no_grad():
-            pred_test_init = [NN(x) for x in test_xs]
-            loss_init = sum( loss_f(yout, ytrue) for yout,ytrue in zip(pred_test_init, test_ys) ) / len(test_ys) 
-        print(f"\nEl modelo '{nombre_archivo_red}' tiene una perdida inicial sobre el test: {loss_init}")
+            pred_test_init = NN(test_xs)
+            loss_init = loss_f(pred_test_init,test_ys)
+        print(f"\nLa red '{nombre_archivo_red}' tiene una perdida inicial sobre el test: {loss_init.detach().numpy()}.\n")
 
         ## ENTRENAMIENTO ##
-        print(f"\nIniciamos entrenamiento de {stp_n} pasos de el modelo '{nombre_archivo_red}'.\n")
+        print(f"\nIniciamos entrenamiento de {stp_n} pasos de la red '{nombre_archivo_red}'.\n")
         NN.train_model(Xs_entrenamiento_def, Ys_entrenamiento_def, stp_n, stp_sz, loss_f, batch_sz)
 
         ## ERROR FINAL sobre el test ##
         with torch.no_grad():
-            pred_test_fin = [NN(x) for x in test_xs]
-            loss_final = sum( loss_f(yout, ytrue) for yout,ytrue in zip(pred_test_fin, test_ys) ) / len(test_ys) 
-        print(f"\nEl modelo '{nombre_archivo_red}' tiene una perdida final sobre el test: {loss_final}")
+            pred_test_fin = NN(test_xs)
+            loss_final = loss_f(pred_test_fin,test_ys)
+        print(f"\nLa red '{nombre_archivo_red}' tiene una perdida final sobre el test: {loss_final}.\n")
 
     # Guardado de la red
     if save_new_NN:
         guardar_MLP(NN, nombre_archivo_red)
     else:
-        print(f"Se ha decidido no guardar el modelo {nombre_archivo_red}.")
+        print(f"Se ha decidido no guardar la red {nombre_archivo_red}.\n")
