@@ -55,6 +55,8 @@ nombre_a_func = {
     "tanh": torch.tanh,
     "sigmoid": torch.sigmoid,
     "cross_entropy": F.cross_entropy,
+    "binary_cross_entropy": F.binary_cross_entropy,
+    "mse_loss": F.mse_loss,
     "none": None
     }
 
@@ -152,7 +154,6 @@ class MLP:
         for layer in self.layers:
             x = layer(x)
         return x
-
 
     def train_model(self, 
                     training_data : list, target_vector : list, 
