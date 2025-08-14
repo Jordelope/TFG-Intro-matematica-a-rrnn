@@ -3,8 +3,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-from MLP_crear_mejoras import MLP, guardar_MLP, cargar_MLP
-from Autoencoder_crear_mejoras import Autoencoder, guardar_autoencoder, cargar_autoencoder
+from MLP_mejoras import MLP, guardar_MLP, cargar_MLP
+from Autoencoder_mejoras import Autoencoder, guardar_autoencoder, cargar_autoencoder
 #--------------------------------------------------------------------------
 from Procesamiento_datos_modular import Xs_test_def, etiquetas_test, nombre_set_test
 
@@ -22,8 +22,8 @@ def visual(autoencoder_nombre : str,
     
     autoencoder = cargar_autoencoder(autoencoder_nombre)
     with torch.no_grad():
-        data_codificado = [autoencoder.encoder(x).detach().numpy() for x in datos ] #conseguimos representacion vectores en esp latente
-        dim_latente = len(data_codificado[0])
+        data_codificado = autoencoder.encoder(datos).detach().numpy()  #conseguimos representacion vectores en esp latente
+        dim_latente = autoencoder.dim_latente
 
 
     if dim is None: #ajustamos dimension si es necesario
@@ -34,7 +34,7 @@ def visual(autoencoder_nombre : str,
         clases_num, clases_name = pd.factorize(pd.Series(etiquetas))
 
 
-    print(f"Se van a visualizar {len(datos)} vectores en el espacio latente de dimension {dim} dado por el autoencoder {autoencoder_nombre}.\n")
+    print(f"Se van a visualizar {datos.shape[0]} vectores en el espacio latente de dimension {dim} dado por el autoencoder {autoencoder_nombre}.\n")
 
 
     if len(data_codificado[0]) > dim:
@@ -113,8 +113,8 @@ def visual(autoencoder_nombre : str,
 
 ## PRUEBAS ##
 
-autoencoder_dim2 = r"redes_disponibles\pruebaVisual_dim2_autoencod.json"
-autoencoder_dim3 = r"redes_disponibles\pruebaVisual_dim3_autoencod.json"
+autoencoder_dim2 =  r"redes_disponibles\mejoras\visual_pruebas_dim2_autoenc.json"
+autoencoder_dim3 =  r"redes_disponibles\mejoras\visual_pruebas_dim3_autoenc.json"
 vectores = Xs_test_def
 etiquetas = etiquetas_test
 titulo ="PRUEBAS"
