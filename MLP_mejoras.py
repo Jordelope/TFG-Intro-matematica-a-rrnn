@@ -25,7 +25,9 @@ import random
 
 Fichero para probar posibles mejoras sin modificar el original que funciona correctamente.
 
-PENDIENTE: Mejorar el entrenamiento
+PENDIENTE: 
+    -Mejorar el entrenamiento
+    -REVISAR cross_entropy
 
 OPCIONAL: Modificar get_batches para que devuelva tensores (ya lo hace el entrenamiento ahora mismo)
 
@@ -235,7 +237,7 @@ def guardar_MLP(red : MLP, archivo : str):
     import json
     with open(archivo, "w") as f:
         json.dump({"estructura": estructura, "activaciones": activaciones, "pesos": state}, f)
-    print(f"Red guardada en '{archivo}'\n")
+    print(f"Modelo guardado en '{archivo}'\n")
 
 
 def cargar_MLP(archivo : str):
@@ -268,7 +270,7 @@ def cargar_MLP(archivo : str):
             raise ValueError("La forma del peso cargado no coincide con la esperada")
         param.data = val_tensor
 
-    print(f"Red cargada correctamente desde '{archivo}'")
+    print(f"Modelo cargado correctamente desde '{archivo}'")
     return red
 
 
