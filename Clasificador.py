@@ -1,59 +1,68 @@
 import torch
 import torch.nn.functional as F
-from MLP import MLP, cargar_MLP, guardar_MLP
-from Autoencoder import Autoencoder, cargar_autoencoder, guardar_autoencoder
+from MLP_mejoras import MLP, cargar_MLP, guardar_MLP, nombre_a_func
+from Autoencoder_mejoras import Autoencoder, cargar_autoencoder, guardar_autoencoder
 
 class Clasificador:
 
     def __init__(self, 
                  encoder : MLP, 
                  n_classes : int,
-                 estructura : list, 
-                 f_act_salida : callable=None, 
-                 f_act_oculta : callable=None):
+                 estr_oc_clas : list,
+                 list_act_clas: list):
         
         self.n_classes = n_classes
-        self.dim_latente = len(encoder.layers[-1].neurons) # Igual es util que los mlp guarden el nin y noout de forma mas accesible
-        
-        self.mlp_clasificador = MLP(self.dim_latente,n_classes,estructura,f_act_salida,f_act_oculta)
+        self.dim_latente = encoder.dim_out
+        self.mlp_clasificador = MLP(self.dim_latente, n_classes, estr_oc_clas, list_act_clas)
         self.encoder = encoder
-        
         self.layers = encoder.layers + self.mlp_clasificador.layers
     
     def parameters(self):
         return self.encoder.parameters() + self.mlp_clasificador.parameters()
     
-    def __call__(self,x):
+    def __call__(self,x:torch.Tensor):
         """"""
-        dimension_entrada = len(x)
         if not isinstance(x, torch.Tensor):
             raise TypeError("x debe ser un tensor de PyTorch")
         
-        if dimension_entrada == self.dim_latente:
+        if x.shape[-1] == self.dim_latente: 
+            print("El clasificador ha interpretado que x ya estaba codificado.\n")
             classified = self.mlp_clasificador(x)
 
-        else:
+        elif x.shape[-1] == self.encoder.dim_in:
             encoded = self.encoder(x)
             classified = self.mlp_clasificador(encoded)
+        else:
+            raise ValueError(
+                f"Dimensión de entrada no válida: {x.shape[-1]}. "
+                f"Esperado {self.encoder.dim_in} (datos crudos) o {self.dim_latente} (codificados)."
+            )
         
         return classified
     
     def train_classifier(self,
-              training_encoded_data : list,
-              target_vector : list,
+              training_data : list[torch.Tensor],
+              target_vector : list[torch.Tensor],
               n_steps : int,
               stp_sz : float,
               loss_f : callable = F.cross_entropy,
               batch_size : int = None):
         
-        if len(training_encoded_data) != len(target_vector):
-            raise ValueError(f"Longitudes incompatibles: {len(training_encoded_data)} datos codificados y {len(target_vector)} etiquetas.")
+        
+        if not isinstance(training_data, torch.Tensor):
+            training_data = torch.stack(training_data)
 
-        self.mlp_clasificador.train_model(training_encoded_data,target_vector,n_steps,stp_sz,loss_f,batch_size)
+        if training_data[0].shape[-1] == self.dim_latente :
+            self.mlp_clasificador.train_model(training_data, target_vector, n_steps, stp_sz, loss_f, batch_size)
+        else:
+            with torch.no_grad():
+                training_encoded_data = self.encoder(training_data)
+            self.mlp_clasificador.train_model(training_encoded_data, target_vector, n_steps, stp_sz, loss_f, batch_size)
     
+
     def train_whole_model(self,
-              training_encoded_data : list,
-              target_vector : list,
+              training_data : list[torch.Tensor],
+              target_vector : list[torch.Tensor],
               n_steps : int,
               stp_sz : float,
               loss_f : callable = F.cross_entropy,
@@ -74,25 +83,19 @@ def guardar_classificador(clasificador: Clasificador, archivo: str):
     """
     state = [p.detach().tolist() for p in clasificador.parameters()]
 
-    estructura_enc = [len(clasificador.encoder.layers[0].neurons[0].w)] + \
-                     [len(layer.neurons) for layer in clasificador.encoder.layers]
-    estructura_cls = [len(clasificador.mlp_clasificador.layers[0].neurons[0].w)] + \
-                     [len(layer.neurons) for layer in clasificador.mlp_clasificador.layers]
+    estructura_enc = clasificador.encoder.dims
+    estructura_cls = clasificador.mlp_clasificador.dims
 
-    f_salida_enc = clasificador.encoder.f_act_salida.__name__ if clasificador.encoder.f_act_salida else None
-    f_oculta_enc = clasificador.encoder.f_act_oculta.__name__ if clasificador.encoder.f_act_oculta else None
-    f_salida_cls = clasificador.mlp_clasificador.f_act_salida.__name__ if clasificador.mlp_clasificador.f_act_salida else None
-    f_oculta_cls = clasificador.mlp_clasificador.f_act_oculta.__name__ if clasificador.mlp_clasificador.f_act_oculta else None
+    activaciones_enc = [ getattr(f_act, "__name__", "none") if f_act else "none" for f_act in clasificador.encoder.activaciones] 
+    activaciones_mlp_clas = [ getattr(f_act, "__name__", "none") if f_act else "none" for f_act in clasificador.mlp_clasificador.activaciones] 
 
     import json
     with open(archivo, "w") as f:
         json.dump({
             "estructura_encoder": estructura_enc,
             "estructura_clasificador": estructura_cls,
-            "f_salida_encoder": f_salida_enc,
-            "f_oculta_encoder": f_oculta_enc,
-            "f_salida_clasificador": f_salida_cls,
-            "f_oculta_clasificador": f_oculta_cls,
+            "activaciones_enc": activaciones_enc,
+            "activaciones_mlp_clas": activaciones_mlp_clas,
             "pesos": state
         }, f)
     print(f"Clasificador guardado en '{archivo}'\n")
@@ -108,40 +111,27 @@ def cargar_classificador(archivo: str) -> Clasificador:
     with open(archivo, "r") as f:
         data = json.load(f)
 
-    f_map = {
-    "relu": F.relu,
-    "sigmoid": torch.sigmoid,
-    "tanh": torch.tanh,
-    "softmax": F.softmax,
-    "log_softmax": F.log_softmax,
-    "cross_entropy": F.cross_entropy,
-    "identity": lambda x: x,  # esta sí puede quedarse como lambda si no usas su nombre
-    None: None
-}
-
 
     encoder = MLP(
-        nin=data["estructura_encoder"][0],
-        nout=data["estructura_encoder"][-1],
-        estructura=data["estructura_encoder"][1:-1],
-        f_act_salida=f_map[data["f_salida_encoder"]],
-        f_act_oculta=f_map[data["f_oculta_encoder"]]
+        dim_in=data["estructura_encoder"][0],
+        dim_out=data["estructura_encoder"][-1],
+        estructura_oct=data["estructura_encoder"][1:-1],
+        f_act_list=[nombre_a_func.get(f, None) for f in data["activaciones_enc"]]
     )
 
     mlp_clasificador = MLP(
-        nin=data["estructura_clasificador"][0],
-        nout=data["estructura_clasificador"][-1],
-        estructura=data["estructura_clasificador"][1:-1],
-        f_act_salida=f_map[data["f_salida_clasificador"]],
-        f_act_oculta=f_map[data["f_oculta_clasificador"]]
+        dim_in=data["estructura_clasificador"][0],
+        dim_out=data["estructura_clasificador"][-1],
+        estructura_oct=data["estructura_clasificador"][1:-1],
+        f_act_list=[nombre_a_func.get(f, None) for f in data["activaciones_mlp_clas"]]
     )
 
     clasificador = Clasificador.__new__(Clasificador)  # Evita __init__
 
     clasificador.encoder = encoder
     clasificador.mlp_clasificador = mlp_clasificador
-    clasificador.n_classes = data["estructura_clasificador"][-1]
-    clasificador.dim_latente = len(encoder.layers[-1].neurons)
+    clasificador.n_classes = mlp_clasificador.dim_out
+    clasificador.dim_latente = encoder.dim_out
     clasificador.layers = encoder.layers + mlp_clasificador.layers
 
     # Y ahora sí, asigna los pesos después
