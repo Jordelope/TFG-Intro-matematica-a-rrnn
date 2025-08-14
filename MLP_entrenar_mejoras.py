@@ -61,7 +61,7 @@ if __name__ == "__main__":
     with torch.no_grad():
         pred_test_init = NN(Xs_test)
         init_loss = loss_f(pred_test_init,Ys_test) 
-    print(f"\nEl modelo '{nombre_archivo_red}' tiene una perdida inicial sobre el set de entrenamiento: {init_loss}")
+    print(f"\nEl modelo '{nombre_archivo_red}' tiene una perdida inicial sobre el test: {init_loss}")
 
     ## ENTRENAMIENTO ##
     print(f"\nIniciamos entrenamiento de {stp_n} pasos del  modelo '{nombre_archivo_red}'.\n") 
