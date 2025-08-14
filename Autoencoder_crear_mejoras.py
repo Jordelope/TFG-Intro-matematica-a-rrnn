@@ -15,12 +15,12 @@ PENDIENTE:
 """
 
 ## NOMBRE archivos de MLP (si ya los tenemos) y OPCIONES de entrenado y guardado ##
-existen_MLP = True
-archivo_encod = r"redes_disponibles\mejoras\encoder_pruebas.json"
-archivo_decod = r"redes_disponibles\mejoras\decoder_pruebas.json"
-archivo_autoencoder = r"redes_disponibles\mejoras\autoencoder_pruebas.json"
+existen_MLP = False
+archivo_encod = r"redes_disponibles\mejoras\visual_pruebas_dim3_enc.json"
+archivo_decod = r"redes_disponibles\mejoras\visual_pruebas_dim3_dec.json"
+archivo_autoencoder = r"redes_disponibles\mejoras\visual_pruebas_dim3_autoenc.json"
 
-train_autoencoder = True
+train_autoencoder = False
 
 save_autoencoder = True
 save_decoder = True

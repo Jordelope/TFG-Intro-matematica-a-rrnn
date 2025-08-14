@@ -17,7 +17,7 @@ datasets = ["datasets/nba_pergame_24y25.csv",
             "datasets/roster_thunder_pergame_24.csv"]
 
 nombre_set_entrenamiento = "datasets/nba_pergame_24_full.csv"
-nombre_set_test = "datasets/nba_pergame_25_full.csv"
+nombre_set_test = "datasets/nba_pergame_24_full.csv"
 
 ## PARAMETROS a ajustar ##
 
