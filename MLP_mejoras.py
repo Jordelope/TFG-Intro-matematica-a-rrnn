@@ -191,7 +191,9 @@ class MLP:
                 X_batch = torch.stack(X_batch)  # (B, dim_in)
                 if loss_f is F.cross_entropy:
                     # Y_batch: índices de clase
-                    Y_batch = torch.tensor(Y_batch, dtype=torch.long)
+                    #Y_batch = torch.tensor(Y_batch, dtype=torch.long)
+                    Y_batch = torch.stack(Y_batch)
+                    pass
                 else:
                     Y_batch = torch.stack(Y_batch)
                 

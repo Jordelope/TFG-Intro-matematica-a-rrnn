@@ -23,7 +23,7 @@ nombre_set_test = "datasets/nba_pergame_25_full.csv"
 
 hacer_prints = False
 
-modo_autoencoder = True # El autoencoder usara entrada=salida
+modo_autoencoder = False # El autoencoder usara entrada=salida
 
 hay_fila_totales_entrenamiento = False
 hay_fila_totales_test = True
