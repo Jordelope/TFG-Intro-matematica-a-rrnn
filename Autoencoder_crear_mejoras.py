@@ -32,7 +32,7 @@ save_encoder = True
 input_sz = len(Xs_entrenamiento_def[0])            # Número de entradas
 lat_spc_dim = 3                                    # Dimension espacio latente(salida encoder, entrada decoder)
 
-estructura_encod = [36, 18 , 10]               # Capas ocultas encoder
+estructura_encod = [72, 36 , 18, 9]               # Capas ocultas encoder
 estructura_decod = estructura_encod[::-1]      # Capas ocultas decoder
 
 lista_act_encod = [F.relu for i in range(len(estructura_encod))] + [None] # Funciones activacion encoder (None = [None,...,None] por defecto lineal en MLP)

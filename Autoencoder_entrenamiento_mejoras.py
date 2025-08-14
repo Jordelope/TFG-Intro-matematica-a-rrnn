@@ -14,9 +14,9 @@ Duda existencial: loss_f(las de torch) calculan bien la perdida si le estamos pa
 
 ## DATOS de red a entrenar ##
 
-archivo_encod = r"redes_disponibles\mejoras\encoder_pruebas.json"
-archivo_decod = r"redes_disponibles\mejoras\decoder_pruebas.json"
-archivo_autoencoder = r"redes_disponibles\mejoras\autoencoder_pruebas.json"
+archivo_encod = r"redes_disponibles\mejoras\visual_pruebas_dim6_enc.json"
+archivo_decod = r"redes_disponibles\mejoras\visual_pruebas_dim6_dec.json"
+archivo_autoencoder = r"redes_disponibles\mejoras\visual_pruebas_dim6_autoenc.json"
 
 ## OPCIONES de guardado ##
 
@@ -27,8 +27,8 @@ sobreescribir_submodelos = True # En caso de True: Se sobreescriben archivos de 
 
 ## HIPERPARAMETROS de entrenamiento ##
 
-stp_n = 10     # Número de pasos de entrenamiento
-stp_sz = 0.005    # Tamaño del paso (learning rate)
+stp_n = 10000     # Número de pasos de entrenamiento
+stp_sz = 0.0005    # Tamaño del paso (learning rate)
 batch_sz = None  # Tamaño del batch (por defecto si es None, todo el dataset)
 
 loss_f = F.mse_loss # Función de pérdida

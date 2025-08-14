@@ -136,14 +136,14 @@ autoencoder_dim6 =  r"redes_disponibles\mejoras\visual_pruebas_dim6_autoenc.json
 
 vectores = Xs_test_def
 etiquetas = etiquetas_test
-titulo ="PRUEBAS"
+
 
 if __name__ == "__main__":
     
-    visual(autoencoder_dim2,vectores,2,etiquetas,titulo)
-    visual(autoencoder_dim3,vectores,3,etiquetas,titulo)
-    visual(autoencoder_dim6,vectores,3,etiquetas,titulo,"pca")
-    visual(autoencoder_dim6,vectores,3,etiquetas,titulo,"tsne")
-    visual(autoencoder_dim6,vectores,3,etiquetas,titulo,"umap") # salta warning
+    visual(autoencoder_dim2,vectores,2,etiquetas,"Pruebas dim2")
+    visual(autoencoder_dim3,vectores,3,etiquetas,"Pruebas dim3")
+    visual(autoencoder_dim6,vectores,3,etiquetas,"Pruebas dim6 pca","pca")
+    visual(autoencoder_dim6,vectores,3,etiquetas,"Pruebas dim6 tsne","tsne")
+    visual(autoencoder_dim6,vectores,3,etiquetas,"Pruebas dim6 umap","umap") # salta warning
 
 
