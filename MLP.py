@@ -238,7 +238,7 @@ def guardar_MLP(red : MLP, archivo : str):
 
     import json
     with open(archivo, "w") as f:
-        json.dump({"estructura": estructura, "activaciones": activaciones, "pesos": state}, f)
+        json.dump({"tipo_modelo":"mlp", "estructura": estructura, "activaciones": activaciones, "pesos": state}, f)
     print(f"Modelo guardado en '{archivo}'\n")
 
 

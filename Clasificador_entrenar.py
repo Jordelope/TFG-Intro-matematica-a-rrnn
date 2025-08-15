@@ -15,13 +15,12 @@ Entrenar Clasificador. " opciones":
 Igual seria util crear archivo con datos ya procesados para no procesarlos cada vez.
 """
 
-## Funciones relevantes ##
 
 
 
 ## DATOS de red a entrenar ##
 
-archivo_clasificador = r"redes_disponibles\pruebaClasificador_dimLatente3.json"
+archivo_clasificador = r"redes_disponibles\prueba_crossEntropy.json"
 archivo_mlp_clas =  r"redes_disponibles\mlp_clas_pruebas.json"
 
 ## OPCIONES de guardado  ##
@@ -33,8 +32,8 @@ save_mlp_clas = False
 
 ## HIPERPARAMETROS de entrenamiento ##
 
-stp_n = 0    # Número de pasos de entrenamiento
-stp_sz = 0.05    # Tamaño del paso (learning rate)
+stp_n = 1000    # Número de pasos de entrenamiento
+stp_sz = 0.000005   # Tamaño del paso (learning rate)
 batch_sz = None  # Tamaño del batch (por defecto si es None, todo el dataset)
 
 loss_f = F.cross_entropy # Función de pérdida
@@ -73,6 +72,10 @@ if __name__ == "__main__":
     else:
         print(f"\nAVISO: El modelo '{archivo_clasificador}' no se va a guardar.")
 
+    # Si usamos cross entropy procesamos los targets
+    #if loss_f == F.cross_entropy:
+    #    ys_train = onehot_to_long(ys_train)
+    #    ys_test = onehot_to_long(ys_test)
 
     ## ERROR INICIAL sobre el test ##
     with torch.no_grad():
@@ -83,7 +86,7 @@ if __name__ == "__main__":
 
     ## ENTRENAMIENTO ##
     print(f"\nIniciamos entrenamiento de {stp_n} pasos del modelo '{archivo_clasificador}'.\n") 
-    NN.train_classifier(xs_train,ys_test,stp_n,stp_sz,loss_f,batch_sz)
+    NN.train_classifier(xs_train,ys_train,stp_n,stp_sz,loss_f,batch_sz)
 
 
     ## ERROR FINAL sobre el test ##

@@ -6,14 +6,16 @@ from mpl_toolkits.mplot3d import Axes3D
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 import umap
-from MLP import MLP, guardar_MLP, cargar_MLP
-from Autoencoder import Autoencoder, guardar_autoencoder, cargar_autoencoder
+from MLP import MLP 
+from Autoencoder import Autoencoder
+from Clasificador import Clasificador
+from Guardar_Cargar import guardar_modelo, cargar_modelo
 #--------------------------------------------------------------------------
 from Procesamiento_datos_modular import Xs_test_def, etiquetas_test, nombre_set_test
 
 """
 Objetivo del fichero: 
-Función visual que tome un autoencoder y un conjunto de vectores y muestre una representacion visual de la codificación de estos en el espacio latente.
+Función visual que tome un autoencoder oc Clasificador y un conjunto de vectores y muestre una representacion visual de la codificación de estos en el espacio latente.
 """
 
 def reducir_dimensionalidad(data, dim_objetivo=2, metodo="pca"):
@@ -29,7 +31,7 @@ def reducir_dimensionalidad(data, dim_objetivo=2, metodo="pca"):
         raise ValueError(f"Método de reducción no reconocido: {metodo}. Opciones: pca, tsne, umap")
 
 
-def visual(autoencoder_nombre : str, 
+def visual(modelo_nombre : str, 
            datos : list, 
            dim: int = None,
            etiquetas : list = None,
@@ -37,10 +39,13 @@ def visual(autoencoder_nombre : str,
            metodo_reduccion: str = "pca"
            ):
     
-    autoencoder = cargar_autoencoder(autoencoder_nombre)
+    modelo = cargar_modelo(modelo_nombre)
+    if not isinstance(modelo,(Autoencoder, Clasificador)):
+        raise TypeError("Solo se pueden visualizar datos de Autoencoder o Clasificador por ahora.")
+    
     with torch.no_grad():
-        data_codificado = autoencoder.encoder(datos).detach().numpy()  #conseguimos representacion vectores en esp latente
-        dim_latente = autoencoder.dim_latente
+        data_codificado = modelo.encoder(datos).detach().numpy()  #conseguimos representacion vectores en esp latente
+        dim_latente = modelo.dim_latente
 
 
     if dim is None: #ajustamos dimension si es necesario
@@ -51,7 +56,7 @@ def visual(autoencoder_nombre : str,
         clases_num, clases_name = pd.factorize(pd.Series(etiquetas))
 
 
-    print(f"Se van a visualizar {datos.shape[0]} vectores en el espacio latente de dimension {dim} dado por el autoencoder {autoencoder_nombre}.\n")
+    print(f"\nSe van a visualizar {datos.shape[0]} vectores en el espacio latente de dimension {dim} dado por el modelo {modelo_nombre}.\n")
 
 
     if dim_latente > dim:
@@ -121,29 +126,5 @@ def visual(autoencoder_nombre : str,
         plt.show()
     
     else:
-        print("La función no puede representar en dimensiones mayores que 3")
-
-
-
-
-#------------------------------------------------------------------------------------------------------------
-
-## PRUEBAS ##
-
-autoencoder_dim2 =  r"redes_disponibles\mejoras\visual_pruebas_dim2_autoenc.json"
-autoencoder_dim3 =  r"redes_disponibles\mejoras\visual_pruebas_dim3_autoenc.json"
-autoencoder_dim6 =  r"redes_disponibles\mejoras\visual_pruebas_dim6_autoenc.json"
-
-vectores = Xs_test_def
-etiquetas = etiquetas_test
-
-
-if __name__ == "__main__":
-    
-    visual(autoencoder_dim2,vectores,2,etiquetas,"Pruebas dim2")
-    visual(autoencoder_dim3,vectores,3,etiquetas,"Pruebas dim3")
-    visual(autoencoder_dim6,vectores,3,etiquetas,"Pruebas dim6 pca","pca")
-    visual(autoencoder_dim6,vectores,3,etiquetas,"Pruebas dim6 tsne","tsne")
-    visual(autoencoder_dim6,vectores,3,etiquetas,"Pruebas dim6 umap","umap") # salta warning
-
-
+        print("La función no puede representar en dimensiones mayores que 3.\n")
+    print("Fin de visualizacion.\n")

@@ -133,6 +133,7 @@ def guardar_autoencoder( red : Autoencoder, archivo : str):
     import json
     with open(archivo, "w") as f:
         json.dump({
+            "tipo_modelo": "autoencoder",
             "estructura_encoder": estructura_enc,
             "estructura_decoder": estructura_dec,
             "activaciones_encoder": activaciones_enc,
