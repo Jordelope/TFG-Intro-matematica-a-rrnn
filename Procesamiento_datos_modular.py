@@ -17,13 +17,13 @@ datasets = ["datasets/nba_pergame_24y25.csv",
             "datasets/roster_thunder_pergame_24.csv"]
 
 nombre_set_entrenamiento = "datasets/nba_pergame_24_full.csv"
-nombre_set_test = "datasets/nba_pergame_25_full.csv"
+nombre_set_test = "datasets/roster_hawks_pergame_25.csv"
 
 ## PARAMETROS a ajustar ##
 
 hacer_prints = False
 
-modo_autoencoder = True # El autoencoder usara entrada=salida
+modo_autoencoder = False # El autoencoder usara entrada=salida
 
 hay_fila_totales_entrenamiento = False
 hay_fila_totales_test = True

@@ -18,10 +18,10 @@ Crear un Clasificador a partir de un Autoencoder YA ENTRENADO. Clasificamos desd
 existe_encoder_suelto = False
 existe_mlp_clas_suelto = False
 
-archivo_encod =         r"redes_disponibles\encoder_pruebas.json"
-archivo_autoencoder =   r"redes_disponibles\autoencoder_pruebas.json" # Si solo tenemos el archivo del autoencoder
-archivo_mlp_clas =      r"redes_disponibles\mlp_clas_pruebas.json"
-archivo_clasificador =  r"redes_disponibles\clasificador_pruebas.json"
+archivo_encod =         r"redes_disponibles\sol_error_clas_encod.json"
+archivo_autoencoder =   r"redes_disponibles\visual_pruebas_dim6_autoenc.json" # Si solo tenemos el archivo del autoencoder
+archivo_mlp_clas =      r"redes_disponibles\sol_error_clas_mlp.json"
+archivo_clasificador =  r"redes_disponibles\usar_pruebas.json"
 
 train_clasificador = True
 
@@ -40,7 +40,7 @@ lista_activaciones_mlp_clas = [None for i in range(len(estructura_oc_mlp_clasifi
 
 ## HIPERPARAMETROS de entrenamiento ##
 
-stp_n = 1                # Número de pasos de entrenamiento
+stp_n = 1050                # Número de pasos de entrenamiento
 stp_sz = 0.001           # Tamaño del paso (learning rate)
 batch_sz = None          # Tamaño del batch (por defecto, todo el dataset)
 
