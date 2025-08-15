@@ -21,13 +21,13 @@ archivo_autoencoder = r"redes_disponibles\mejoras\visual_pruebas_dim6_autoenc.js
 ## OPCIONES de guardado ##
 
 save_after_training = True  # En caso de True: se guarda cuando mejora el error respecto 
-override_guardado = False   # En caso de True: se guarda aunque no mejore el error (si el anterior es True)
+override_guardado = True   # En caso de True: se guarda aunque no mejore el error (si el anterior es True)
 
 sobreescribir_submodelos = True # En caso de True: Se sobreescriben archivos de encoder y decoder.
 
 ## HIPERPARAMETROS de entrenamiento ##
 
-stp_n = 10000     # Número de pasos de entrenamiento
+stp_n = 1000000     # Número de pasos de entrenamiento
 stp_sz = 0.0005    # Tamaño del paso (learning rate)
 batch_sz = None  # Tamaño del batch (por defecto si es None, todo el dataset)
 

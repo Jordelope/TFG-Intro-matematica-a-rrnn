@@ -107,7 +107,7 @@ class Autoencoder:
                 num_batches += 1
 
             # Log
-            if k % 20 == 0 or k == n_steps - 1:
+            if k % 1000 == 0 or k == n_steps - 1:
                 avg_loss = epoch_loss / num_batches
                 print(f"Paso {k} | Loss total: {avg_loss:.6f} "
                     f"(Recon: {loss_recon.item():.6f}, L1: {loss_l1.item():.6f}, L2: {loss_l2.item():.6f})")
