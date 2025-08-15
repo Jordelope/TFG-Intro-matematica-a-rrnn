@@ -92,6 +92,7 @@ def guardar_classificador(clasificador: Clasificador, archivo: str):
     import json
     with open(archivo, "w") as f:
         json.dump({
+            "tipo_modelo": "clasificador",
             "estructura_encoder": estructura_enc,
             "estructura_clasificador": estructura_cls,
             "activaciones_enc": activaciones_enc,
