@@ -25,7 +25,9 @@ import random
 
 Fichero para probar posibles mejoras sin modificar el original que funciona correctamente.
 
-PENDIENTE: Mejorar el entrenamiento
+PENDIENTE: 
+    -Mejorar el entrenamiento
+    -REVISAR cross_entropy
 
 OPCIONAL: Modificar get_batches para que devuelva tensores (ya lo hace el entrenamiento ahora mismo)
 
@@ -156,7 +158,7 @@ class MLP:
         return x
 
     def train_model(self, 
-                    training_data : list, target_vector : list, 
+                    training_data : list[torch.Tensor], target_vector : list[torch.Tensor], 
                     n_steps : int, stp_sz : float , 
                     loss_f : callable = F.cross_entropy, 
                     batch_size : int=None):
@@ -189,7 +191,9 @@ class MLP:
                 X_batch = torch.stack(X_batch)  # (B, dim_in)
                 if loss_f is F.cross_entropy:
                     # Y_batch: índices de clase
-                    Y_batch = torch.tensor(Y_batch, dtype=torch.long)
+                    #Y_batch = torch.tensor(Y_batch, dtype=torch.long)
+                    Y_batch = torch.stack(Y_batch)
+                    pass
                 else:
                     Y_batch = torch.stack(Y_batch)
                 
@@ -235,7 +239,7 @@ def guardar_MLP(red : MLP, archivo : str):
     import json
     with open(archivo, "w") as f:
         json.dump({"estructura": estructura, "activaciones": activaciones, "pesos": state}, f)
-    print(f"Red guardada en '{archivo}'\n")
+    print(f"Modelo guardado en '{archivo}'\n")
 
 
 def cargar_MLP(archivo : str):
@@ -268,7 +272,7 @@ def cargar_MLP(archivo : str):
             raise ValueError("La forma del peso cargado no coincide con la esperada")
         param.data = val_tensor
 
-    print(f"Red cargada correctamente desde '{archivo}'")
+    print(f"Modelo cargado correctamente desde '{archivo}'")
     return red
 
 
@@ -283,11 +287,3 @@ def cargar_MLP(archivo : str):
 #
 # Las clases están relacionadas jerárquicamente: MLP -> Layer
 # Cada nivel encapsula el anterior, permitiendo construir redes de cualquier tamaño y profundidad.
-#
-# Para entrenar una red, se recomienda preparar los datos como listas de tensores de tipo float32.
-#
-# Ejemplo de uso:
-#   red = MLP(dim_in=10, dim_out=3, estructura=[5, 5])
-#   red.train_model(X_train, Y_train, n_steps=100, stp_sz=0.01)
-#   guardar_red(red, 'mi_red.json')
-#   red2 = cargar_red('mi_red.json')

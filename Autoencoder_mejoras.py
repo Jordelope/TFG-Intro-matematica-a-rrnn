@@ -37,7 +37,7 @@ class Autoencoder:
         decoded = self.decoder(encoded)
         return decoded
     
-    def train_model(self, training_data: list,
+    def train_model(self, training_data: list[torch.Tensor],
                     n_steps: int, step_sz: float,
                     loss_f: callable = F.mse_loss, batch_size: int = None,
                     beta: float = 1e-4, lambda_l2: float = 1e-4):
@@ -107,7 +107,7 @@ class Autoencoder:
                 num_batches += 1
 
             # Log
-            if k % 20 == 0 or k == n_steps - 1:
+            if k % 1000 == 0 or k == n_steps - 1:
                 avg_loss = epoch_loss / num_batches
                 print(f"Paso {k} | Loss total: {avg_loss:.6f} "
                     f"(Recon: {loss_recon.item():.6f}, L1: {loss_l1.item():.6f}, L2: {loss_l2.item():.6f})")

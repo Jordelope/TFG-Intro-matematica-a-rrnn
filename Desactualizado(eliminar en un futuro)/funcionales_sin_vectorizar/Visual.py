@@ -113,8 +113,8 @@ def visual(autoencoder_nombre : str,
 
 ## PRUEBAS ##
 
-autoencoder_dim2 = r"redes_disponibles\pruebaVisual_dim2_autoencod.json"
-autoencoder_dim3 = r"redes_disponibles\pruebaVisual_dim3_autoencod.json"
+autoencoder_dim2 = r"redes_disponibles\antiguas\pruebaVisual_dim2_autoencod.json"
+autoencoder_dim3 = r"redes_disponibles\antiguas\pruebaVisual_dim3_autoencod.json"
 vectores = Xs_test_def
 etiquetas = etiquetas_test
 titulo ="PRUEBAS"
