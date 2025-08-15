@@ -13,6 +13,21 @@ PENDIENTE:
 Crear un Clasificador a partir de un Autoencoder YA ENTRENADO. Clasificamos desde el espacio latente.
 
 """
+## Funciones relevantes ##
+def onehot_to_long(targets: torch.Tensor) -> torch.Tensor:
+    """
+    Para cuando se use F.cross_entropy.
+    Detecta si los targets están en formato one-hot y los convierte a índices de clase (long).
+    Si ya están en formato entero, los deja tal cual.
+    """
+    # Verifica si es un tensor 2D y si cada fila tiene una única posición con valor 1
+    if targets.ndim == 2 and torch.all((targets.sum(dim=1) == 1)) and torch.all((targets == 0) | (targets == 1)):
+        # Es one-hot → convertir a índices
+        return torch.argmax(targets, dim=1).long()
+    else:
+        # Ya está en formato correcto o no es one-hot
+        return targets.long()
+
 
 ## NOMBRE archivos de encoder/Autoencoder y OPCIONES de entrenado y guardado ##
 existe_encoder_suelto = False
@@ -21,7 +36,7 @@ existe_mlp_clas_suelto = False
 archivo_encod =         r"redes_disponibles\sol_error_clas_encod.json"
 archivo_autoencoder =   r"redes_disponibles\visual_pruebas_dim6_autoenc.json" # Si solo tenemos el archivo del autoencoder
 archivo_mlp_clas =      r"redes_disponibles\sol_error_clas_mlp.json"
-archivo_clasificador =  r"redes_disponibles\usar_pruebas.json"
+archivo_clasificador =  r"redes_disponibles\prueba_crossEntropy.json"
 
 train_clasificador = True
 
@@ -93,6 +108,11 @@ if __name__ == "__main__":
             print("[ERROR] Xs_entrenamiento_def contiene infinitos")
         else:
             
+            # Si usamos cross entropy procesamos los targets
+            if loss_f == F.cross_entropy:
+                ys_train = onehot_to_long(ys_train)
+                ys_test = onehot_to_long(ys_test)
+
             ## ERROR INICIAL sobre el test ##
             with torch.no_grad():
                 pred_test_init = clasificador(xs_test)
