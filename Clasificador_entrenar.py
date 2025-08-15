@@ -1,8 +1,8 @@
 import torch
 import torch.nn.functional as F
-from MLP_mejoras import MLP, cargar_MLP, guardar_MLP
+from MLP import MLP, cargar_MLP, guardar_MLP
 from Procesamiento_datos_modular import Xs_entrenamiento_def, Xs_test_def, Ys_entrenamiento_def, Ys_test_def
-from Autoencoder_mejoras import Autoencoder, guardar_autoencoder, cargar_autoencoder
+from Autoencoder import Autoencoder, guardar_autoencoder, cargar_autoencoder
 from Clasificador import Clasificador, guardar_classificador, cargar_classificador
 
 """
@@ -22,7 +22,7 @@ Igual seria util crear archivo con datos ya procesados para no procesarlos cada 
 ## DATOS de red a entrenar ##
 
 archivo_clasificador = r"redes_disponibles\pruebaClasificador_dimLatente3.json"
-archivo_mlp_clas =  r"redes_disponibles\mejoras\mlp_clas_pruebas.json"
+archivo_mlp_clas =  r"redes_disponibles\mlp_clas_pruebas.json"
 
 ## OPCIONES de guardado  ##
 

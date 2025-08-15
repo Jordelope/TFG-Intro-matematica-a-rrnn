@@ -1,9 +1,9 @@
 import torch
 import torch.nn.functional as F
 import random
-from MLP_mejoras import MLP, cargar_MLP, guardar_MLP
+from MLP import MLP, cargar_MLP, guardar_MLP
 from Procesamiento_datos_modular import Xs_entrenamiento_def, Xs_test_def, Ys_entrenamiento_def, Ys_test_def
-from Autoencoder_mejoras import Autoencoder, guardar_autoencoder, cargar_autoencoder
+from Autoencoder import Autoencoder, guardar_autoencoder, cargar_autoencoder
 
 
 """
@@ -16,9 +16,9 @@ PENDIENTE:
 
 ## NOMBRE archivos de MLP (si ya los tenemos) y OPCIONES de entrenado y guardado ##
 existen_MLP = False
-archivo_encod = r"redes_disponibles\mejoras\visual_pruebas_dim3_enc.json"
-archivo_decod = r"redes_disponibles\mejoras\visual_pruebas_dim3_dec.json"
-archivo_autoencoder = r"redes_disponibles\mejoras\visual_pruebas_dim3_autoenc.json"
+archivo_encod = r"redes_disponibles\visual_pruebas_dim3_enc.json"
+archivo_decod = r"redes_disponibles\visual_pruebas_dim3_dec.json"
+archivo_autoencoder = r"redes_disponibles\visual_pruebas_dim3_autoenc.json"
 
 train_autoencoder = False
 

@@ -1,6 +1,6 @@
 import torch
 import torch.nn.functional as F
-from MLP_mejoras import MLP, get_batches, guardar_MLP, cargar_MLP, nombre_a_func
+from MLP import MLP, get_batches, guardar_MLP, cargar_MLP, nombre_a_func
 
 
 

@@ -1,8 +1,8 @@
 import torch
 import torch.nn.functional as F
-from MLP_mejoras import MLP, cargar_MLP, guardar_MLP
+from MLP import MLP, cargar_MLP, guardar_MLP
 from Procesamiento_datos_modular import Xs_entrenamiento_def, Xs_test_def, Ys_entrenamiento_def, Ys_test_def
-from Autoencoder_mejoras import Autoencoder, guardar_autoencoder, cargar_autoencoder
+from Autoencoder import Autoencoder, guardar_autoencoder, cargar_autoencoder
 from Clasificador import Clasificador, guardar_classificador, cargar_classificador
 
 """
@@ -18,10 +18,10 @@ Crear un Clasificador a partir de un Autoencoder YA ENTRENADO. Clasificamos desd
 existe_encoder_suelto = False
 existe_mlp_clas_suelto = False
 
-archivo_encod =         r"redes_disponibles\mejoras\encoder_pruebas.json"
-archivo_autoencoder =   r"redes_disponibles\mejoras\autoencoder_pruebas.json" # Si solo tenemos el archivo del autoencoder
-archivo_mlp_clas =      r"redes_disponibles\mejoras\mlp_clas_pruebas.json"
-archivo_clasificador =  r"redes_disponibles\mejoras\clasificador_pruebas.json"
+archivo_encod =         r"redes_disponibles\encoder_pruebas.json"
+archivo_autoencoder =   r"redes_disponibles\autoencoder_pruebas.json" # Si solo tenemos el archivo del autoencoder
+archivo_mlp_clas =      r"redes_disponibles\mlp_clas_pruebas.json"
+archivo_clasificador =  r"redes_disponibles\clasificador_pruebas.json"
 
 train_clasificador = True
 

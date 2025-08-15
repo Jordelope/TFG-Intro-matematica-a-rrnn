@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 import numpy
-from MLP_mejoras import MLP, guardar_MLP, cargar_MLP
+from MLP import MLP, guardar_MLP, cargar_MLP
 from Procesamiento_datos_modular import Xs_entrenamiento_def, Xs_test_def, Ys_entrenamiento_def, Ys_test_def
 
 

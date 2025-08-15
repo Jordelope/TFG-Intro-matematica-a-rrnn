@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
-from MLP_mejoras import MLP, cargar_MLP, guardar_MLP, nombre_a_func
-from Autoencoder_mejoras import Autoencoder, cargar_autoencoder, guardar_autoencoder
+from MLP import MLP, cargar_MLP, guardar_MLP, nombre_a_func
+from Autoencoder import Autoencoder, cargar_autoencoder, guardar_autoencoder
 
 class Clasificador:
 

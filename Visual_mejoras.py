@@ -6,8 +6,8 @@ from mpl_toolkits.mplot3d import Axes3D
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 import umap
-from MLP_mejoras import MLP, guardar_MLP, cargar_MLP
-from Autoencoder_mejoras import Autoencoder, guardar_autoencoder, cargar_autoencoder
+from MLP import MLP, guardar_MLP, cargar_MLP
+from Autoencoder import Autoencoder, guardar_autoencoder, cargar_autoencoder
 #--------------------------------------------------------------------------
 from Procesamiento_datos_modular import Xs_test_def, etiquetas_test, nombre_set_test
 

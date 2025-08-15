@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
-from MLP_mejoras import MLP, cargar_MLP, guardar_MLP
-from Autoencoder_mejoras import Autoencoder, cargar_autoencoder, guardar_autoencoder
+from MLP import MLP, cargar_MLP, guardar_MLP
+from Autoencoder import Autoencoder, cargar_autoencoder, guardar_autoencoder
 from Procesamiento_datos_modular import Xs_entrenamiento_def, Ys_entrenamiento_def, Xs_test_def, Ys_test_def
 
 """
@@ -14,9 +14,9 @@ Duda existencial: loss_f(las de torch) calculan bien la perdida si le estamos pa
 
 ## DATOS de red a entrenar ##
 
-archivo_encod = r"redes_disponibles\mejoras\visual_pruebas_dim6_enc.json"
-archivo_decod = r"redes_disponibles\mejoras\visual_pruebas_dim6_dec.json"
-archivo_autoencoder = r"redes_disponibles\mejoras\visual_pruebas_dim6_autoenc.json"
+archivo_encod = r"redes_disponibles\visual_pruebas_dim6_enc.json"
+archivo_decod = r"redes_disponibles\visual_pruebas_dim6_dec.json"
+archivo_autoencoder = r"redes_disponibles\visual_pruebas_dim6_autoenc.json"
 
 ## OPCIONES de guardado ##
 

@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 import random
-from MLP_mejoras import MLP, guardar_MLP, cargar_MLP
+from MLP import MLP, guardar_MLP, cargar_MLP
 from Procesamiento_datos_modular import Xs_entrenamiento_def, Xs_test_def, Ys_entrenamiento_def, Ys_test_def
 
 """
@@ -32,7 +32,7 @@ estructura_oct = [18, 18]  # Capas ocultas
 lista_act = None           # Lista de funciones de activación (asegurar compatible con estructura oct)
                            #(None =[None,...,None] por defecto en MLP)
 
-nombre_archivo_red = r"redes_disponibles\mejoras\nuevo_mlp_pruebas.json"  # Archivo donde se guarda la red
+nombre_archivo_red = r"redes_disponibles\nuevo_mlp_pruebas.json"  # Archivo donde se guarda la red
 
 ## OPCIONES GUARDADO ##
 save_new_NN = True         # ¿Guardar la red tras crearla?
