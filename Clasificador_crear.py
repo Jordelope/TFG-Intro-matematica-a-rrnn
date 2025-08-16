@@ -33,12 +33,12 @@ def onehot_to_long(targets: torch.Tensor) -> torch.Tensor:
 existe_encoder_suelto = False
 existe_mlp_clas_suelto = False
 
-archivo_encod =         r"redes_disponibles\sol_error_clas_encod.json"
-archivo_autoencoder =   r"redes_disponibles\visual_pruebas_dim6_autoenc.json" # Si solo tenemos el archivo del autoencoder
-archivo_mlp_clas =      r"redes_disponibles\sol_error_clas_mlp.json"
-archivo_clasificador =  r"redes_disponibles\prueba_crossEntropy.json"
+archivo_encod =         r"redes_disponibles\intento1_enc.json"
+archivo_autoencoder =    r"redes_disponibles\intento1_autoen.json" # Si solo tenemos el archivo del autoencoder
+archivo_mlp_clas =      r"redes_disponibles\intento1_mlp_clas.json"
+archivo_clasificador =  r"redes_disponibles\intento1_Clasificador.json"
 
-train_clasificador = True
+train_clasificador = False
 
 save_clasificador = True
 save_mlp_clas = False   # RECOMENDACION: Dejar siempre en False
@@ -48,9 +48,9 @@ save_encoder = False    # RECOMENDADCION: Dejar en False a menos que NO se tenga
 ## ESTRUCTURA mlp_clasificador ##
 n_classes = 5           # Número de clases de nuestro clasificador
 
-estructura_oc_mlp_clasificador= [36, 18 , 10]      # Capas ocultas mlp_clasificador 
+estructura_oc_mlp_clasificador= [8]      # Capas ocultas mlp_clasificador 
 
-lista_activaciones_mlp_clas = [None for i in range(len(estructura_oc_mlp_clasificador))] + [F.softmax] # Funciones activacion del mlp_clas
+lista_activaciones_mlp_clas = [torch.relu for i in range(len(estructura_oc_mlp_clasificador))] + [F.softmax] # Funciones activacion del mlp_clas
 
 
 ## HIPERPARAMETROS de entrenamiento ##

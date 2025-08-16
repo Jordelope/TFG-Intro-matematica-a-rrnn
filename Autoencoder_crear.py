@@ -16,11 +16,11 @@ PENDIENTE:
 
 ## NOMBRE archivos de MLP (si ya los tenemos) y OPCIONES de entrenado y guardado ##
 existen_MLP = False
-archivo_encod = r"redes_disponibles\visual_pruebas_dim3_enc.json"
-archivo_decod = r"redes_disponibles\visual_pruebas_dim3_dec.json"
-archivo_autoencoder = r"redes_disponibles\visual_pruebas_dim3_autoenc.json"
+archivo_encod = r"redes_disponibles\intento1_enc.json"
+archivo_decod = r"redes_disponibles\intento1_dec.json"
+archivo_autoencoder = r"redes_disponibles\intento1_autoen.json"
 
-train_autoencoder = False
+train_autoencoder = True
 
 save_autoencoder = True
 save_decoder = True
@@ -30,9 +30,9 @@ save_encoder = True
 ## ESTRUCTURA autoencoder (si no tenemos los MLP) ##
 
 input_sz = len(Xs_entrenamiento_def[0])            # Número de entradas
-lat_spc_dim = 3                                    # Dimension espacio latente(salida encoder, entrada decoder)
+lat_spc_dim = 4                                    # Dimension espacio latente(salida encoder, entrada decoder)
 
-estructura_encod = [72, 36 , 18, 9]               # Capas ocultas encoder
+estructura_encod = [18, 12, 6]               # Capas ocultas encoder
 estructura_decod = estructura_encod[::-1]      # Capas ocultas decoder
 
 lista_act_encod = [F.relu for i in range(len(estructura_encod))] + [None] # Funciones activacion encoder (None = [None,...,None] por defecto lineal en MLP)
@@ -40,12 +40,13 @@ lista_act_decod = [F.relu for i in range(len(estructura_decod))] + [None] # Func
 
 ## HIPERPARAMETROS de entrenamiento ##
 
-stp_n = 10     # Número de pasos de entrenamiento
+stp_n = 5000     # Número de pasos de entrenamiento
 stp_sz = stp_sz = 0.001    # Tamaño del paso (learning rate)
-batch_sz = None  # Tamaño del batch (por defecto, todo el dataset)
+batch_sz = 32  # Tamaño del batch (por defecto, todo el dataset)
 
 loss_f = F.mse_loss # Función de pérdida
-
+beta = 0.005
+lambda_l2 = 0.001
 
 ## DATOS de entrenamiento y test ##
 xs_train = Xs_entrenamiento_def
@@ -92,7 +93,7 @@ if __name__ == "__main__":
 
 
         print(f"\nIniciamos entrenamiento de {stp_n} pasos del autoencoder '{archivo_autoencoder}'.\n")
-        autoencoder.train_model(xs_train, stp_n, stp_sz, loss_f, batch_sz)
+        autoencoder.train_model(xs_train, stp_n, stp_sz, loss_f, batch_sz,beta,lambda_l2)
 
         ## ERROR FINAL sobre el test ##
         with torch.no_grad():

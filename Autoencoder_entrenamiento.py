@@ -32,6 +32,8 @@ stp_sz = 0.0005    # Tamaño del paso (learning rate)
 batch_sz = None  # Tamaño del batch (por defecto si es None, todo el dataset)
 
 loss_f = F.mse_loss # Función de pérdida
+beta = 0.005
+lambda_l2 = 0.001
 
 
 ## DATOS de entrenamiento y test ##

@@ -27,7 +27,7 @@ def vector_a_clase(xs):
     return xs.argmax().item()
 
 ## NOMBRE Clasificador ##
-archivo_clasificador = r"redes_disponibles\sol_error_clas_clasifi.json"
+archivo_clasificador = r"redes_disponibles\intento1_Clasificador.json"
 ver_solo_decision = True # Si es True veremos SOLO que clase asigna a los datos el clasificador. En caso contrario veremos las "Probabilidades".
 
 ## DATOS a clasificar / TEST a evaluar ##
@@ -42,7 +42,7 @@ ver_repr_latente = True
 
 dim_repr = 3 
 modos_redd_dim = ["pca", "tsne", "umap"]
-modo_redd_dim = "pca"
+modo_redd_dim = "umap"
 titulo_grafico = "Titulo"
 
 
@@ -83,6 +83,8 @@ if __name__=="__main__":
     
     if ver_repr_latente:
         visual(archivo_clasificador,xs_a_clasificar,dim_repr,clases_datos,titulo_grafico,modo_redd_dim)
+        visual(archivo_clasificador,xs_a_clasificar,dim_repr,clases_test,"Clases test",modo_redd_dim)
+
 
     
 
