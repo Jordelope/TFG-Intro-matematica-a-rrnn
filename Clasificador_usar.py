@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 import numpy
 from MLP import MLP, cargar_MLP, guardar_MLP, nombre_a_func
-from Procesamiento_datos_modular import Xs_entrenamiento_def, Xs_test_def, Ys_entrenamiento_def, Ys_test_def
+from Procesar_datos import procesar_datos
 from Autoencoder import Autoencoder, guardar_autoencoder, cargar_autoencoder
 from Clasificador import Clasificador, guardar_classificador, cargar_classificador
 from Visual import visual
@@ -33,16 +33,29 @@ ver_solo_decision = True # Si es True veremos SOLO que clase asigna a los datos 
 ## DATOS a clasificar / TEST a evaluar ##
 modo_evaluacion = True
 
-xs_a_clasificar = Xs_test_def
-ys_para_evaluar = Ys_test_def
+xs_a_clasificar = None
+ys_para_evaluar = None
 
+_,_,_,xs_a_clasificar,ys_para_evaluar,etiquetas_test = procesar_datos(archivo_set_train="datasets/nba_pergame_24_full.csv",
+                                                                      archivo_set_test="datasets/nba_pergame_24_full.csv",
+                                                                      modo_autoencoder=False,
+                                                                      modo_columnas="solo_volumen",
+                                                                      modo_targets="pos",
+                                                                      modo_etiquetado="posicion",
+                                                                      normalizar_datos=True,
+                                                                      modo_normalizacion="zscore",
+                                                                      umbral_partidos=5,
+                                                                      umbral_minutos=5,
+                                                                      umbral_en_test=True,
+                                                                      hay_fila_total_entrenamiento=False,
+                                                                      hay_fila_total_test=True)
 
 ## OPCIONES visualizacion ##
 ver_repr_latente = True
 
 dim_repr = 3 
 modos_redd_dim = ["pca", "tsne", "umap"]
-modo_redd_dim = "umap"
+modo_redd_dim = "tsne"
 titulo_grafico = "Titulo"
 
 

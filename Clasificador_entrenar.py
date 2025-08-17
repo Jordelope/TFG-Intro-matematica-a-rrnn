@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 from MLP import MLP, cargar_MLP, guardar_MLP
-from Procesamiento_datos_modular import Xs_entrenamiento_def, Xs_test_def, Ys_entrenamiento_def, Ys_test_def
+from Procesar_datos import procesar_datos
 from Autoencoder import Autoencoder, guardar_autoencoder, cargar_autoencoder
 from Clasificador import Clasificador, guardar_classificador, cargar_classificador
 
@@ -40,11 +40,20 @@ loss_f = F.cross_entropy # Función de pérdida
 
 
 ## DATOS de entrenamiento y test (sin encoding)##
-xs_train = Xs_entrenamiento_def
-ys_train = Ys_entrenamiento_def
+xs_train,ys_train,etiquetas_train,_,xs_test,ys_test,etiquetas_test = procesar_datos(archivo_set_train="datasets/nba_pergame_24_full.csv",
+                                                                                    archivo_set_test="datasets/nba_pergame_24_full.csv",
+                                                                                    modo_autoencoder=False,
+                                                                                    modo_columnas="solo_volumen",
+                                                                                    modo_targets="pos",
+                                                                                    modo_etiquetado="posicion",
+                                                                                    normalizar_datos=True,
+                                                                                    modo_normalizacion="zscore",
+                                                                                    umbral_partidos=5,
+                                                                                    umbral_minutos=5,
+                                                                                    umbral_en_test=True,
+                                                                                    hay_fila_total_entrenamiento=False,
+                                                                                    hay_fila_total_test=True)
 
-xs_test = Xs_test_def
-ys_test = Ys_test_def
 
 
 

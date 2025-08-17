@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 import random
 from MLP import MLP, cargar_MLP, guardar_MLP
-from Procesamiento_datos_modular import Xs_entrenamiento_def, Xs_test_def, Ys_entrenamiento_def, Ys_test_def
+from Procesar_datos import procesar_datos
 from Autoencoder import Autoencoder, guardar_autoencoder, cargar_autoencoder
 
 
@@ -29,7 +29,7 @@ save_encoder = True
 
 ## ESTRUCTURA autoencoder (si no tenemos los MLP) ##
 
-input_sz = len(Xs_entrenamiento_def[0])            # Número de entradas
+input_sz = 18            # Número de entradas
 lat_spc_dim = 4                                    # Dimension espacio latente(salida encoder, entrada decoder)
 
 estructura_encod = [18, 12, 6]               # Capas ocultas encoder
@@ -49,10 +49,20 @@ beta = 0.005
 lambda_l2 = 0.001
 
 ## DATOS de entrenamiento y test ##
-xs_train = Xs_entrenamiento_def
-ys_train = Ys_entrenamiento_def
-xs_test = Xs_test_def
-ys_test = Ys_test_def
+xs_train,ys_train,etiquetas_train,_,xs_test,ys_test,etiquetas_test = procesar_datos(archivo_set_train="datasets/nba_pergame_24_full.csv",
+                                                                                    archivo_set_test="datasets/nba_pergame_24_full.csv",
+                                                                                    modo_autoencoder=True,
+                                                                                    modo_columnas="solo_volumen",
+                                                                                    modo_targets="pos",
+                                                                                    modo_etiquetado="posicion",
+                                                                                    normalizar_datos=True,
+                                                                                    modo_normalizacion="zscore",
+                                                                                    umbral_partidos=5,
+                                                                                    umbral_minutos=5,
+                                                                                    umbral_en_test=True,
+                                                                                    hay_fila_total_entrenamiento=False,
+                                                                                    hay_fila_total_test=True)
+
 
 if __name__ == "__main__":
     
@@ -80,9 +90,9 @@ if __name__ == "__main__":
     
 
     if train_autoencoder:
-        if torch.isnan(Xs_entrenamiento_def).any():
+        if torch.isnan(xs_train).any():
             print("[ERROR] Xs_entrenamiento_def contiene NaNs")
-        if torch.isinf(Xs_entrenamiento_def).any():
+        if torch.isinf(xs_train).any():
             print("[ERROR] Xs_entrenamiento_def contiene infinitos")
 
         ## ERROR INICIAL sobre el test ##

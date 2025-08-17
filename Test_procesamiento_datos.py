@@ -1,5 +1,5 @@
 import torch
-from Procesamiento_datos_modular import procesar_datos
+from Procesamiento_datos_modular_desactualizado import procesar_datos
 
 def test_procesar_datos_autoencoder():
     X_train, Y_train, X_test, Y_test = procesar_datos(

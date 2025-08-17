@@ -163,7 +163,7 @@ def procesar_datos(
         y_train = [mapping_pos.get(pos) for pos in pos_train]
         y_test = [mapping_pos.get(pos) for pos in pos_test]
 
-        # Limpieza de None
+        # Limpieza de None ¿¿¿????
         cleaned_train = [(x, y) for x, y in zip(X_train, y_train) if y is not None]
         X_train, y_train = zip(*cleaned_train)
         cleaned_test = [(x, y) for x, y in zip(X_test, y_test) if y is not None]
