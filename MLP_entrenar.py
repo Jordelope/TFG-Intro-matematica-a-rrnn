@@ -2,8 +2,7 @@ import torch
 import torch.nn.functional as F
 import random
 from MLP import MLP, guardar_MLP, cargar_MLP
-from Procesamiento_datos_modular import Xs_entrenamiento_def, Xs_test_def, Ys_entrenamiento_def, Ys_test_def
-
+from Procesar_datos import procesar_datos
 
 ## Funciones relevantes ##
 def clasificacion(xs):
@@ -29,11 +28,20 @@ override_guardado = True   # En caso de True: se guarda aunque no mejore el erro
 
 
 ## DATOS de test y entrenamiento ##
-Xs_train = Xs_entrenamiento_def
-Ys_train = Ys_entrenamiento_def
+xs_train,ys_train,etiquetas_train,_,xs_test,ys_test,etiquetas_test = procesar_datos(archivo_set_train="datasets/nba_pergame_24_full.csv",
+                                                                                    archivo_set_test="datasets/nba_pergame_24_full.csv",
+                                                                                    modo_autoencoder=False,
+                                                                                    modo_columnas="solo_volumen",
+                                                                                    modo_targets="pos",
+                                                                                    modo_etiquetado="posicion",
+                                                                                    normalizar_datos=True,
+                                                                                    modo_normalizacion="zscore",
+                                                                                    umbral_partidos=5,
+                                                                                    umbral_minutos=5,
+                                                                                    umbral_en_test=True,
+                                                                                    hay_fila_total_entrenamiento=False,
+                                                                                    hay_fila_total_test=True)
 
-Xs_test = Xs_test_def
-Ys_test = Ys_test_def
 
 
 
@@ -59,19 +67,19 @@ if __name__ == "__main__":
 
     ## ERROR INICIAL sobre el test ##
     with torch.no_grad():
-        pred_test_init = NN(Xs_test)
-        init_loss = loss_f(pred_test_init,Ys_test) 
+        pred_test_init = NN(xs_test)
+        init_loss = loss_f(pred_test_init,ys_test) 
     print(f"\nEl modelo '{nombre_archivo_red}' tiene una perdida inicial sobre el test: {init_loss}")
 
     ## ENTRENAMIENTO ##
     print(f"\nIniciamos entrenamiento de {stp_n} pasos del  modelo '{nombre_archivo_red}'.\n") 
-    NN.train_model(Xs_train,Ys_train,stp_n,stp_sz,loss_f,batch_sz)
+    NN.train_model(xs_train,ys_train,stp_n,stp_sz,loss_f,batch_sz)
     
     
     ## ERROR FINAL sobre el test ##
     with torch.no_grad():
-        pred_test_fin = NN(Xs_test)
-        loss_final = loss_f(pred_test_fin,Ys_test) 
+        pred_test_fin = NN(xs_test)
+        loss_final = loss_f(pred_test_fin,ys_test) 
     print(f"\nEl modelo '{nombre_archivo_red}' tiene una perdida final sobre el test: {loss_final}")
 
 

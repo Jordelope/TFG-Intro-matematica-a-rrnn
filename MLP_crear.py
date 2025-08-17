@@ -2,8 +2,7 @@ import torch
 import torch.nn.functional as F
 import random
 from MLP import MLP, guardar_MLP, cargar_MLP
-from Procesamiento_datos_modular import Xs_entrenamiento_def, Xs_test_def, Ys_entrenamiento_def, Ys_test_def
-
+from Procesar_datos import procesar_datos
 """
 crear_red_torch.py
 -------------------
@@ -26,8 +25,8 @@ Estructura general del script:
 
 
 ## ARQUITECTURA de la red ## (Prestar MUCHA ATENCION A FUNCIONES ACTIVACION)
-input_sz = len(Xs_entrenamiento_def[0])      # Número de entradas (asegurar que coincide con los datos que se va a usar)
-out_sz = len(Ys_entrenamiento_def[0])        # Número de salidas (asegurar que coincide con los datos que se va a usar)
+input_sz = 18      # Número de entradas (asegurar que coincide con los datos que se va a usar)
+out_sz = 5        # Número de salidas (asegurar que coincide con los datos que se va a usar)
 estructura_oct = [18, 18]  # Capas ocultas
 lista_act = None           # Lista de funciones de activación (asegurar compatible con estructura oct)
                            #(None =[None,...,None] por defecto en MLP)
@@ -48,11 +47,20 @@ loss_f = F.mse_loss # Función de pérdida
 
 
 ## Cargamos los datos de entrenamiento ##
-xs = Xs_entrenamiento_def
-ys = Ys_entrenamiento_def
-## Establecemos el test ## 
-test_xs = Xs_test_def
-test_ys = Ys_test_def
+xs_train,ys_train,etiquetas_train,_,xs_test,ys_test,etiquetas_test = procesar_datos(archivo_set_train="datasets/nba_pergame_24_full.csv",
+                                                                                    archivo_set_test="datasets/nba_pergame_24_full.csv",
+                                                                                    modo_autoencoder=False,
+                                                                                    modo_columnas="solo_volumen",
+                                                                                    modo_targets="pos",
+                                                                                    modo_etiquetado="posicion",
+                                                                                    normalizar_datos=True,
+                                                                                    modo_normalizacion="zscore",
+                                                                                    umbral_partidos=5,
+                                                                                    umbral_minutos=5,
+                                                                                    umbral_en_test=True,
+                                                                                    hay_fila_total_entrenamiento=False,
+                                                                                    hay_fila_total_test=True)
+
 
 
 #-------------------------------------------------------------------------------------------------------------------------------
@@ -79,18 +87,18 @@ if __name__ == "__main__":
 
         ## ERROR INICIAL sobre el test ##
         with torch.no_grad():
-            pred_test_init = NN(test_xs)
-            loss_init = loss_f(pred_test_init,test_ys)
+            pred_test_init = NN(xs_test)
+            loss_init = loss_f(pred_test_init,ys_test)
         print(f"\nLa red '{nombre_archivo_red}' tiene una perdida inicial sobre el test: {loss_init.detach().numpy()}.\n")
 
         ## ENTRENAMIENTO ##
         print(f"\nIniciamos entrenamiento de {stp_n} pasos de la red '{nombre_archivo_red}'.\n")
-        NN.train_model(Xs_entrenamiento_def, Ys_entrenamiento_def, stp_n, stp_sz, loss_f, batch_sz)
+        NN.train_model(xs_train, ys_train, stp_n, stp_sz, loss_f, batch_sz)
 
         ## ERROR FINAL sobre el test ##
         with torch.no_grad():
-            pred_test_fin = NN(test_xs)
-            loss_final = loss_f(pred_test_fin,test_ys)
+            pred_test_fin = NN(xs_test)
+            loss_final = loss_f(pred_test_fin,ys_test)
         print(f"\nLa red '{nombre_archivo_red}' tiene una perdida final sobre el test: {loss_final}.\n")
 
     # Guardado de la red

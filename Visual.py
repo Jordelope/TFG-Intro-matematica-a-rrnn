@@ -11,7 +11,6 @@ from Autoencoder import Autoencoder
 from Clasificador import Clasificador
 from Guardar_Cargar import guardar_modelo, cargar_modelo
 #--------------------------------------------------------------------------
-from Procesamiento_datos_modular import Xs_test_def, etiquetas_test, nombre_set_test
 
 """
 Objetivo del fichero: 

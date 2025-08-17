@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from MLP import MLP, cargar_MLP, guardar_MLP
 from Autoencoder import Autoencoder, cargar_autoencoder, guardar_autoencoder
-from Procesamiento_datos_modular import Xs_entrenamiento_def, Ys_entrenamiento_def, Xs_test_def, Ys_test_def
+from Procesar_datos import procesar_datos
 
 """
 Duda existencial: loss_f(las de torch) calculan bien la perdida si le estamos pasando el batch no?
@@ -32,14 +32,25 @@ stp_sz = 0.0005    # Tamaño del paso (learning rate)
 batch_sz = None  # Tamaño del batch (por defecto si es None, todo el dataset)
 
 loss_f = F.mse_loss # Función de pérdida
+beta = 0.005
+lambda_l2 = 0.001
 
 
 ## DATOS de entrenamiento y test ##
-xs_train = Xs_entrenamiento_def
-ys_train = Ys_entrenamiento_def
+xs_train,ys_train,etiquetas_train,_,xs_test,ys_test,etiquetas_test = procesar_datos(archivo_set_train="datasets/nba_pergame_24_full.csv",
+                                                                                    archivo_set_test="datasets/nba_pergame_24_full.csv",
+                                                                                    modo_autoencoder=False,
+                                                                                    modo_columnas="solo_volumen",
+                                                                                    modo_targets="pos",
+                                                                                    modo_etiquetado="posicion",
+                                                                                    normalizar_datos=True,
+                                                                                    modo_normalizacion="zscore",
+                                                                                    umbral_partidos=5,
+                                                                                    umbral_minutos=5,
+                                                                                    umbral_en_test=True,
+                                                                                    hay_fila_total_entrenamiento=False,
+                                                                                    hay_fila_total_test=True)
 
-xs_test = Xs_test_def
-ys_test = Ys_test_def
 
 
 

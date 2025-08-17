@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 from MLP import MLP, cargar_MLP, guardar_MLP
-from Procesamiento_datos_modular import Xs_entrenamiento_def, Xs_test_def, Ys_entrenamiento_def, Ys_test_def
+from Procesar_datos import procesar_datos
 from Autoencoder import Autoencoder, guardar_autoencoder, cargar_autoencoder
 from Clasificador import Clasificador, guardar_classificador, cargar_classificador
 
@@ -33,12 +33,12 @@ def onehot_to_long(targets: torch.Tensor) -> torch.Tensor:
 existe_encoder_suelto = False
 existe_mlp_clas_suelto = False
 
-archivo_encod =         r"redes_disponibles\sol_error_clas_encod.json"
-archivo_autoencoder =   r"redes_disponibles\visual_pruebas_dim6_autoenc.json" # Si solo tenemos el archivo del autoencoder
-archivo_mlp_clas =      r"redes_disponibles\sol_error_clas_mlp.json"
-archivo_clasificador =  r"redes_disponibles\prueba_crossEntropy.json"
+archivo_encod =         r"redes_disponibles\intento1_enc.json"
+archivo_autoencoder =    r"redes_disponibles\intento1_autoen.json" # Si solo tenemos el archivo del autoencoder
+archivo_mlp_clas =      r"redes_disponibles\intento1_mlp_clas.json"
+archivo_clasificador =  r"redes_disponibles\intento1_Clasificador.json"
 
-train_clasificador = True
+train_clasificador = False
 
 save_clasificador = True
 save_mlp_clas = False   # RECOMENDACION: Dejar siempre en False
@@ -48,9 +48,9 @@ save_encoder = False    # RECOMENDADCION: Dejar en False a menos que NO se tenga
 ## ESTRUCTURA mlp_clasificador ##
 n_classes = 5           # Número de clases de nuestro clasificador
 
-estructura_oc_mlp_clasificador= [36, 18 , 10]      # Capas ocultas mlp_clasificador 
+estructura_oc_mlp_clasificador= [8]      # Capas ocultas mlp_clasificador 
 
-lista_activaciones_mlp_clas = [None for i in range(len(estructura_oc_mlp_clasificador))] + [F.softmax] # Funciones activacion del mlp_clas
+lista_activaciones_mlp_clas = [torch.relu for i in range(len(estructura_oc_mlp_clasificador))] + [F.softmax] # Funciones activacion del mlp_clas
 
 
 ## HIPERPARAMETROS de entrenamiento ##
@@ -63,10 +63,20 @@ loss_f = F.cross_entropy   # Función de pérdida
 
 
 ## DATOS de entrenamiento ##
-xs_train = Xs_entrenamiento_def
-ys_train = Ys_entrenamiento_def
-xs_test = Xs_test_def
-ys_test = Ys_test_def
+xs_train,ys_train,etiquetas_train,_,xs_test,ys_test,etiquetas_test = procesar_datos(archivo_set_train="datasets/nba_pergame_24_full.csv",
+                                                                      archivo_set_test="datasets/nba_pergame_24_full.csv",
+                                                                      modo_autoencoder=False,
+                                                                      modo_columnas="solo_volumen",
+                                                                      modo_targets="pos",
+                                                                      modo_etiquetado="posicion",
+                                                                      normalizar_datos=True,
+                                                                      modo_normalizacion="zscore",
+                                                                      umbral_partidos=5,
+                                                                      umbral_minutos=5,
+                                                                      umbral_en_test=True,
+                                                                      hay_fila_total_entrenamiento=False,
+                                                                      hay_fila_total_test=True)
+
 
 #-------------------------------------------------------------------------------------------------------------------------
 
@@ -102,9 +112,9 @@ if __name__ == "__main__":
 
 
     if train_clasificador:
-        if torch.isnan(Xs_entrenamiento_def).any():
+        if torch.isnan(xs_train).any():
             print("[ERROR] Xs_entrenamiento_def contiene NaNs")
-        elif torch.isinf(Xs_entrenamiento_def).any():
+        elif torch.isinf(xs_train).any():
             print("[ERROR] Xs_entrenamiento_def contiene infinitos")
         else:
             
