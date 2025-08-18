@@ -23,7 +23,14 @@ class Autoencoder:
         self.decoder = decoder
         self.layers = encoder.layers + decoder.layers
         self.dim_latente = self.encoder.dim_out
+        self.description = "Autoencoder"
+            
+    def add_descript(self, text:str):
+        self.description += "\n" + text
     
+    def view_descript(self):
+        print(self.description)
+
     def parameters(self):
         return self.encoder.parameters() + self.decoder.parameters()
 
@@ -126,7 +133,7 @@ def guardar_autoencoder( red : Autoencoder, archivo : str):
     state = [p.detach().tolist() for p in red.parameters()]
     estructura_enc = red.encoder.dims
     estructura_dec = red.decoder.dims
-    
+    descripcion = red.description
     activaciones_enc = [ getattr(f_act, "__name__", "none") if f_act else "none" for f_act in red.encoder.activaciones]
     activaciones_dec = [ getattr(f_act, "__name__", "none") if f_act else "none" for f_act in red.decoder.activaciones]
     
@@ -134,6 +141,7 @@ def guardar_autoencoder( red : Autoencoder, archivo : str):
     with open(archivo, "w") as f:
         json.dump({
             "tipo_modelo": "autoencoder",
+            "descripcion": descripcion,
             "estructura_encoder": estructura_enc,
             "estructura_decoder": estructura_dec,
             "activaciones_encoder": activaciones_enc,
@@ -154,7 +162,7 @@ def cargar_autoencoder(archivo : str):
     
     act_encoder = [nombre_a_func.get(f_act,None) for f_act in data["activaciones_encoder"]]
     act_decoder = [nombre_a_func.get(f_act,None) for f_act in data["activaciones_decoder"]]
-
+    descripcion = data["descripcion"]
     encoder = MLP(
         dim_in=data["estructura_encoder"][0],
         dim_out=data["estructura_encoder"][-1],
@@ -171,7 +179,9 @@ def cargar_autoencoder(archivo : str):
 
     for p, w in zip(encoder.parameters() + decoder.parameters(), data["pesos"]):
         p.data = torch.tensor(w, dtype=torch.float32)
+    
+    autoencoder = Autoencoder(encoder, decoder)
+    autoencoder.description = descripcion
 
-
-    return Autoencoder(encoder, decoder)
+    return autoencoder
 

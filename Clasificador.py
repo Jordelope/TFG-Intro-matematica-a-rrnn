@@ -37,7 +37,14 @@ class Clasificador:
         self.mlp_clasificador = MLP(self.dim_latente, n_classes, estr_oc_clas, list_act_clas)
         self.encoder = encoder
         self.layers = encoder.layers + self.mlp_clasificador.layers
+        self.description = "Clasificador"
     
+    def add_descript(self, text:str):
+        self.description += "\n" + text
+    
+    def view_descript(self):
+        print(self.description)
+
     def parameters(self):
         return self.encoder.parameters() + self.mlp_clasificador.parameters()
     
@@ -116,7 +123,7 @@ def guardar_classificador(clasificador: Clasificador, archivo: str):
 
     estructura_enc = clasificador.encoder.dims
     estructura_cls = clasificador.mlp_clasificador.dims
-
+    descripcion = clasificador.description
     activaciones_enc = [ getattr(f_act, "__name__", "none") if f_act else "none" for f_act in clasificador.encoder.activaciones] 
     activaciones_mlp_clas = [ getattr(f_act, "__name__", "none") if f_act else "none" for f_act in clasificador.mlp_clasificador.activaciones] 
 
@@ -124,6 +131,7 @@ def guardar_classificador(clasificador: Clasificador, archivo: str):
     with open(archivo, "w") as f:
         json.dump({
             "tipo_modelo": "clasificador",
+            "descripcion": descripcion,
             "estructura_encoder": estructura_enc,
             "estructura_clasificador": estructura_cls,
             "activaciones_enc": activaciones_enc,
@@ -143,6 +151,8 @@ def cargar_classificador(archivo: str) -> Clasificador:
     with open(archivo, "r") as f:
         data = json.load(f)
 
+    
+    descripcion = data["descripcion"]
 
     encoder = MLP(
         dim_in=data["estructura_encoder"][0],
@@ -165,8 +175,8 @@ def cargar_classificador(archivo: str) -> Clasificador:
     clasificador.n_classes = mlp_clasificador.dim_out
     clasificador.dim_latente = encoder.dim_out
     clasificador.layers = encoder.layers + mlp_clasificador.layers
+    clasificador.description = descripcion
 
-    # Y ahora sí, asigna los pesos después
     for p, w in zip(clasificador.parameters(), data["pesos"]):
         p.data = torch.tensor(w, dtype=torch.float32)
     print(f"Clasificador cargado correctamente desde '{archivo}'")

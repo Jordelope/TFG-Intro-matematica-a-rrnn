@@ -140,7 +140,13 @@ class MLP:
         self.dim_out  = dim_out
         self.activaciones = f_act_list
         self.layers = [ Layer(dims[i], dims[i+1], f_act) for i,f_act in zip( range(len(dims) - 1) , self.activaciones) ] 
+        self.description = "MLP"
         
+    def add_descript(self, text:str):
+        self.description += "\n" + text
+    
+    def view_descript(self):
+        print(self.description)
 
     def parameters(self):
         """Devuelve todos los parámetros entrenables de la red (de todas las capas)."""
@@ -238,7 +244,7 @@ def guardar_MLP(red : MLP, archivo : str):
 
     import json
     with open(archivo, "w") as f:
-        json.dump({"tipo_modelo":"mlp", "estructura": estructura, "activaciones": activaciones, "pesos": state}, f)
+        json.dump({"tipo_modelo":"mlp", "descripcion":red.description, "estructura": estructura, "activaciones": activaciones, "pesos": state}, f)
     print(f"Modelo guardado en '{archivo}'\n")
 
 
@@ -262,8 +268,10 @@ def cargar_MLP(archivo : str):
     dim_in = estructura[0]
     dim_out = estructura[-1]
     capas = estructura[1:-1]  # Estructura intermedia
+    descripcion = data["descripcion"]
 
     red = MLP(dim_in, dim_out, capas, activaciones)
+    red.description = descripcion
     flat_params = [p for layer in red.layers for p in layer.parameters()]
 
     for param, val in zip(flat_params, pesos):

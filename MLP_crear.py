@@ -31,7 +31,7 @@ estructura_oct = [18, 18]  # Capas ocultas
 lista_act = None           # Lista de funciones de activación (asegurar compatible con estructura oct)
                            #(None =[None,...,None] por defecto en MLP)
 
-nombre_archivo_red = r"redes_disponibles\nuevo_mlp_pruebas.json"  # Archivo donde se guarda la red
+nombre_archivo_red = r"redes_disponibles\mlp_prueba_desc.json"  # Archivo donde se guarda la red
 
 ## OPCIONES GUARDADO ##
 save_new_NN = True         # ¿Guardar la red tras crearla?
@@ -39,15 +39,15 @@ entrenar_nueva_red = True # ¿Entrenar la red tras crearla?
 
 
 ## HIPERPARAMETROS de entrenamiento ##
-stp_n = 1  # Número de pasos de entrenamiento
-stp_sz = 0.25 # Tamaño del paso (learning rate)
+stp_n = 10  # Número de pasos de entrenamiento
+stp_sz = 0.00025 # Tamaño del paso (learning rate)
 batch_sz = None  # Tamaño del batch (None = por defecto, todo el dataset)
 
 loss_f = F.mse_loss # Función de pérdida
 
 
 ## Cargamos los datos de entrenamiento ##
-xs_train,ys_train,etiquetas_train,_,xs_test,ys_test,etiquetas_test = procesar_datos(archivo_set_train="datasets/nba_pergame_24_full.csv",
+xs_train, ys_train, etiquetas_train, xs_test, ys_test, etiquetas_test = procesar_datos(archivo_set_train="datasets/nba_pergame_24_full.csv",
                                                                                     archivo_set_test="datasets/nba_pergame_24_full.csv",
                                                                                     modo_autoencoder=False,
                                                                                     modo_columnas="solo_volumen",
