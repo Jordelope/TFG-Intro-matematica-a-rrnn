@@ -33,17 +33,17 @@ def onehot_to_long(targets: torch.Tensor) -> torch.Tensor:
 existe_encoder_suelto = False
 existe_mlp_clas_suelto = False
 
-archivo_encod =         r"redes_disponibles\intento1_enc.json"
-archivo_autoencoder =    r"redes_disponibles\intento1_autoen.json" # Si solo tenemos el archivo del autoencoder
-archivo_mlp_clas =      r"redes_disponibles\intento1_mlp_clas.json"
-archivo_clasificador =  r"redes_disponibles\intento1_Clasificador.json"
+archivo_encod =         r"redes_disponibles\encod_prueba_desc.json" 
+archivo_autoencoder =   r"redes_disponibles\autoen_prueba_desc.json"  # Si solo tenemos el archivo del autoencoder
+archivo_mlp_clas =      r"redes_disponibles\mlp_clas_prueba_desc.json" 
+archivo_clasificador =  r"redes_disponibles\clasificador_prueba_desc.json" 
 
 train_clasificador = False
 
 save_clasificador = True
-save_mlp_clas = False   # RECOMENDACION: Dejar siempre en False
+save_mlp_clas = True   # RECOMENDACION: Dejar siempre en False
 save_encoder = False    # RECOMENDADCION: Dejar en False a menos que NO se tenga encoder independiente.
-
+# ¿ sobreescribir autoencoder ?
 
 ## ESTRUCTURA mlp_clasificador ##
 n_classes = 5           # Número de clases de nuestro clasificador
@@ -63,7 +63,7 @@ loss_f = F.cross_entropy   # Función de pérdida
 
 
 ## DATOS de entrenamiento ##
-xs_train,ys_train,etiquetas_train,_,xs_test,ys_test,etiquetas_test = procesar_datos(archivo_set_train="datasets/nba_pergame_24_full.csv",
+xs_train, ys_train, etiquetas_train, xs_test, ys_test, etiquetas_test = procesar_datos(archivo_set_train="datasets/nba_pergame_24_full.csv",
                                                                       archivo_set_test="datasets/nba_pergame_24_full.csv",
                                                                       modo_autoencoder=False,
                                                                       modo_columnas="solo_volumen",

@@ -16,10 +16,9 @@ PENDIENTE:
 
 ## NOMBRE archivos de MLP (si ya los tenemos) y OPCIONES de entrenado y guardado ##
 existen_MLP = False
-archivo_encod = r"redes_disponibles\intento1_enc.json"
-archivo_decod = r"redes_disponibles\intento1_dec.json"
-archivo_autoencoder = r"redes_disponibles\intento1_autoen.json"
-
+archivo_encod = r"redes_disponibles\encod_prueba_desc.json" 
+archivo_decod = r"redes_disponibles\decod_prueba_desc.json" 
+archivo_autoencoder = r"redes_disponibles\autoen_prueba_desc.json" 
 train_autoencoder = True
 
 save_autoencoder = True
@@ -40,7 +39,7 @@ lista_act_decod = [F.relu for i in range(len(estructura_decod))] + [None] # Func
 
 ## HIPERPARAMETROS de entrenamiento ##
 
-stp_n = 5000     # Número de pasos de entrenamiento
+stp_n = 500     # Número de pasos de entrenamiento
 stp_sz = stp_sz = 0.001    # Tamaño del paso (learning rate)
 batch_sz = 32  # Tamaño del batch (por defecto, todo el dataset)
 
@@ -49,7 +48,7 @@ beta = 0.005
 lambda_l2 = 0.001
 
 ## DATOS de entrenamiento y test ##
-xs_train,ys_train,etiquetas_train,_,xs_test,ys_test,etiquetas_test = procesar_datos(archivo_set_train="datasets/nba_pergame_24_full.csv",
+xs_train, ys_train, etiquetas_train, xs_test, ys_test, etiquetas_test = procesar_datos(archivo_set_train="datasets/nba_pergame_24_full.csv",
                                                                                     archivo_set_test="datasets/nba_pergame_24_full.csv",
                                                                                     modo_autoencoder=True,
                                                                                     modo_columnas="solo_volumen",
