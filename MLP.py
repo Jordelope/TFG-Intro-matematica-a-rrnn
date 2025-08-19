@@ -143,7 +143,7 @@ class MLP:
         self.description = "MLP"
         
     def add_descript(self, text:str):
-        self.description += "\n" + text
+        self.description += "\n " + text
     
     def view_descript(self):
         print(self.description)

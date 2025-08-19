@@ -1,7 +1,8 @@
 import torch
 import torch.nn.functional as F
 import random
-from MLP import MLP, guardar_MLP, cargar_MLP
+from MLP import MLP
+from Guardar_Cargar import guardar_modelo
 from Procesar_datos import procesar_datos
 """
 crear_red_torch.py
@@ -33,22 +34,28 @@ lista_act = None           # Lista de funciones de activación (asegurar compati
 
 nombre_archivo_red = r"redes_disponibles\mlp_prueba_desc.json"  # Archivo donde se guarda la red
 
-## OPCIONES GUARDADO ##
+
+## OPCIONES GUARDADO Y ENTRENAMIENTO ##
 save_new_NN = True         # ¿Guardar la red tras crearla?
-entrenar_nueva_red = True # ¿Entrenar la red tras crearla?
+entrenar_nueva_red = True  # ¿Entrenar la red tras crearla?
+
+añadir_descripcion = False  # Opción de añadir una descripción
+descripcion = ""
 
 
 ## HIPERPARAMETROS de entrenamiento ##
 stp_n = 10  # Número de pasos de entrenamiento
-stp_sz = 0.00025 # Tamaño del paso (learning rate)
+stp_sz = 0.00005 # Tamaño del paso (learning rate)
 batch_sz = None  # Tamaño del batch (None = por defecto, todo el dataset)
 
 loss_f = F.mse_loss # Función de pérdida
 
 
 ## Cargamos los datos de entrenamiento ##
-xs_train, ys_train, etiquetas_train, xs_test, ys_test, etiquetas_test = procesar_datos(archivo_set_train="datasets/nba_pergame_24_full.csv",
-                                                                                    archivo_set_test="datasets/nba_pergame_24_full.csv",
+archivo_entrenamiento = "datasets/nba_pergame_24_full.csv"
+archivo_test = "datasets/nba_pergame_24_full.csv"
+xs_train, ys_train, etiquetas_train, xs_test, ys_test, etiquetas_test = procesar_datos(archivo_set_train=archivo_entrenamiento,
+                                                                                    archivo_set_test=archivo_test,
                                                                                     modo_autoencoder=False,
                                                                                     modo_columnas="solo_volumen",
                                                                                     modo_targets="pos",
@@ -102,7 +109,9 @@ if __name__ == "__main__":
         print(f"\nLa red '{nombre_archivo_red}' tiene una perdida final sobre el test: {loss_final}.\n")
 
     # Guardado de la red
+    if añadir_descripcion:
+        NN.description = descripcion
     if save_new_NN:
-        guardar_MLP(NN, nombre_archivo_red)
+        guardar_modelo(NN, nombre_archivo_red)
     else:
         print(f"Se ha decidido no guardar la red {nombre_archivo_red}.\n")

@@ -24,9 +24,16 @@ class Autoencoder:
         self.layers = encoder.layers + decoder.layers
         self.dim_latente = self.encoder.dim_out
         self.description = "Autoencoder"
+        
+        if self.encoder.description == "MLP":
+            self.encoder.description = "Encoder"
+        if self.decoder.description == "MLP":
+            self.decoder.description = "Decoder"
+
+
             
     def add_descript(self, text:str):
-        self.description += "\n" + text
+        self.description += "\n " + text
     
     def view_descript(self):
         print(self.description)

@@ -1,10 +1,17 @@
+import torch
 from MLP import MLP, cargar_MLP, guardar_MLP
 from Autoencoder import Autoencoder, guardar_autoencoder, cargar_autoencoder
 from Clasificador import Clasificador, guardar_classificador, cargar_classificador
 
 
 def guardar_modelo(modelo,nombre_archivo):
-
+    
+    # Revisamos que no se vayan a guardar parametro con valor Nan
+    parametros = modelo.parameters()
+    if any(torch.isnan(p).any() for p in parametros):
+        raise ValueError(" Se han detectado valores Nan en el modelo y por tanto no se va a guardar.")
+    
+    # Guardamos segun tipo de modelo
     if isinstance(modelo, MLP):
         guardar_MLP(modelo, nombre_archivo)
     elif isinstance(modelo, Autoencoder):

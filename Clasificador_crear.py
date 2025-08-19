@@ -1,16 +1,16 @@
 import torch
 import torch.nn.functional as F
-from MLP import MLP, cargar_MLP, guardar_MLP
+from MLP import MLP 
+from Autoencoder import Autoencoder 
+from Clasificador import Clasificador 
+from Guardar_Cargar import guardar_modelo, cargar_modelo
 from Procesar_datos import procesar_datos
-from Autoencoder import Autoencoder, guardar_autoencoder, cargar_autoencoder
-from Clasificador import Clasificador, guardar_classificador, cargar_classificador
 
 """
 
 PENDIENTE:
     -FAlla al entrenar -> revisar encaje cross entropy softmax (el fallo parece estar en el bucle entrenamiento de mlp)
 
-Crear un Clasificador a partir de un Autoencoder YA ENTRENADO. Clasificamos desde el espacio latente.
 
 """
 ## Funciones relevantes ##
@@ -29,7 +29,7 @@ def onehot_to_long(targets: torch.Tensor) -> torch.Tensor:
         return targets.long()
 
 
-## NOMBRE archivos de encoder/Autoencoder y OPCIONES de entrenado y guardado ##
+## NOMBRE archivos de encoder/Autoencoder y clasificador ##
 existe_encoder_suelto = False
 existe_mlp_clas_suelto = False
 
@@ -38,16 +38,20 @@ archivo_autoencoder =   r"redes_disponibles\autoen_prueba_desc.json"  # Si solo 
 archivo_mlp_clas =      r"redes_disponibles\mlp_clas_prueba_desc.json" 
 archivo_clasificador =  r"redes_disponibles\clasificador_prueba_desc.json" 
 
+## OPCIONES de entrenado y guardado ##
+save_clasificador = True
+save_mlp_clas = True   # RECOMENDACION: Dejar en False
+save_encoder = False    # RECOMENDADCION: Dejar en False a menos que NO se tenga encoder independiente.
+
 train_clasificador = False
 
-save_clasificador = True
-save_mlp_clas = True   # RECOMENDACION: Dejar siempre en False
-save_encoder = False    # RECOMENDADCION: Dejar en False a menos que NO se tenga encoder independiente.
-# ¿ sobreescribir autoencoder ?
+
+añadir_descripcion = False  # Opción de añadir una descripción
+descripcion = ""
+
 
 ## ESTRUCTURA mlp_clasificador ##
-n_classes = 5           # Número de clases de nuestro clasificador
-
+n_classes = 5                            # Número de clases de nuestro clasificador
 estructura_oc_mlp_clasificador= [8]      # Capas ocultas mlp_clasificador 
 
 lista_activaciones_mlp_clas = [torch.relu for i in range(len(estructura_oc_mlp_clasificador))] + [F.softmax] # Funciones activacion del mlp_clas
@@ -55,27 +59,29 @@ lista_activaciones_mlp_clas = [torch.relu for i in range(len(estructura_oc_mlp_c
 
 ## HIPERPARAMETROS de entrenamiento ##
 
-stp_n = 1050                # Número de pasos de entrenamiento
+stp_n = 1050             # Número de pasos de entrenamiento
 stp_sz = 0.001           # Tamaño del paso (learning rate)
 batch_sz = None          # Tamaño del batch (por defecto, todo el dataset)
 
 loss_f = F.cross_entropy   # Función de pérdida
 
 
-## DATOS de entrenamiento ##
-xs_train, ys_train, etiquetas_train, xs_test, ys_test, etiquetas_test = procesar_datos(archivo_set_train="datasets/nba_pergame_24_full.csv",
-                                                                      archivo_set_test="datasets/nba_pergame_24_full.csv",
-                                                                      modo_autoencoder=False,
-                                                                      modo_columnas="solo_volumen",
-                                                                      modo_targets="pos",
-                                                                      modo_etiquetado="posicion",
-                                                                      normalizar_datos=True,
-                                                                      modo_normalizacion="zscore",
-                                                                      umbral_partidos=5,
-                                                                      umbral_minutos=5,
-                                                                      umbral_en_test=True,
-                                                                      hay_fila_total_entrenamiento=False,
-                                                                      hay_fila_total_test=True)
+## DATOS de entrenamiento y test ##
+archivo_entrenamiento = "datasets/nba_pergame_24_full.csv"
+archivo_test = "datasets/nba_pergame_24_full.csv"
+xs_train, ys_train, etiquetas_train, xs_test, ys_test, etiquetas_test = procesar_datos(archivo_set_train=archivo_entrenamiento,
+                                                                                    archivo_set_test=archivo_test,
+                                                                                    modo_autoencoder=False,
+                                                                                    modo_columnas="solo_volumen",
+                                                                                    modo_targets="pos",
+                                                                                    modo_etiquetado="posicion",
+                                                                                    normalizar_datos=True,
+                                                                                    modo_normalizacion="zscore",
+                                                                                    umbral_partidos=20,
+                                                                                    umbral_minutos=15,
+                                                                                    umbral_en_test=True,
+                                                                                    hay_fila_total_entrenamiento=False,
+                                                                                    hay_fila_total_test=True)
 
 
 #-------------------------------------------------------------------------------------------------------------------------
@@ -99,15 +105,15 @@ if __name__ == "__main__":
 
     # Cargamos el encoder (suelto o desde el autoencoder)
     if existe_encoder_suelto:
-        encoder = cargar_MLP(archivo_encod)
+        encoder = cargar_modelo(archivo_encod)
     else:
-        autoencoder = cargar_autoencoder(archivo_autoencoder)
+        autoencoder = cargar_modelo(archivo_autoencoder)
         encoder = autoencoder.encoder
     
     # Crear Clasificador
     clasificador = Clasificador(encoder,n_classes,estructura_oc_mlp_clasificador,lista_activaciones_mlp_clas)
     if existe_mlp_clas_suelto:
-        mlp_clasificador = cargar_MLP(archivo_mlp_clas)
+        mlp_clasificador = cargar_modelo(archivo_mlp_clas)
         clasificador.mlp_clasificador = mlp_clasificador
 
 
@@ -129,7 +135,7 @@ if __name__ == "__main__":
                 loss_init = loss_f(pred_test_init,ys_test)
             print(f"\nEl modelo '{archivo_clasificador}' tiene una perdida inicial sobre el test: {loss_init}.\n")
 
-            ## ENTRENAMIENTO ##
+            ## ENTRENAMIENTO de clasificador##
             print(f"\nIniciamos entrenamiento de {stp_n} pasos de la red '{archivo_clasificador}'.\n")
             clasificador.train_classifier(xs_train,ys_train,stp_n,stp_sz,loss_f,batch_sz)
             
@@ -141,10 +147,12 @@ if __name__ == "__main__":
 
 
     # Guardamos las redes segun eleccion
+    if añadir_descripcion:
+        clasificador.description = descripcion
     if save_clasificador:
-        guardar_classificador(clasificador, archivo_clasificador)
+        guardar_modelo(clasificador, archivo_clasificador)
         if save_encoder :
-            guardar_MLP(encoder, archivo_encod)
+            guardar_modelo(encoder, archivo_encod)
         if save_mlp_clas:
-            guardar_MLP(clasificador.mlp_clasificador,archivo_mlp_clas)
+            guardar_modelo(clasificador.mlp_clasificador,archivo_mlp_clas)
      
