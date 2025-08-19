@@ -40,7 +40,7 @@ class Clasificador:
         self.description = "Clasificador"
     
     def add_descript(self, text:str):
-        self.description += "\n" + text
+        self.description += "\n " + text
     
     def view_descript(self):
         print(self.description)

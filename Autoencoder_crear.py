@@ -1,37 +1,35 @@
 import torch
 import torch.nn.functional as F
 import random
-from MLP import MLP, cargar_MLP, guardar_MLP
+from MLP import MLP
+from Autoencoder import Autoencoder
+from Guardar_Cargar import guardar_modelo, cargar_modelo
 from Procesar_datos import procesar_datos
-from Autoencoder import Autoencoder, guardar_autoencoder, cargar_autoencoder
 
 
-"""
-PENDIENTE:
-
-- Decidir cuales son las funciones de activacion mas adeccuadas
-- Definir una buena estructura de autoencoder y entrenar
-
-"""
-
-## NOMBRE archivos de MLP (si ya los tenemos) y OPCIONES de entrenado y guardado ##
+## NOMBRE archivos (se tomaran los MLP si ya los tenemos) ##
 existen_MLP = False
 archivo_encod = r"redes_disponibles\encod_prueba_desc.json" 
 archivo_decod = r"redes_disponibles\decod_prueba_desc.json" 
-archivo_autoencoder = r"redes_disponibles\autoen_prueba_desc.json" 
+archivo_autoencoder = r"redes_disponibles\intento_bueno.json" 
+
+
+## OPCIONES de entrenado y guardado ##
+save_autoencoder = True
+save_decoder = False
+save_encoder = False
+
 train_autoencoder = True
 
-save_autoencoder = True
-save_decoder = True
-save_encoder = True
-
+añadir_descripcion = False  # Opción de añadir una descripción
+descripcion = ""
 
 ## ESTRUCTURA autoencoder (si no tenemos los MLP) ##
 
 input_sz = 18            # Número de entradas
-lat_spc_dim = 4                                    # Dimension espacio latente(salida encoder, entrada decoder)
+lat_spc_dim = 5                                    # Dimension espacio latente(salida encoder, entrada decoder)
 
-estructura_encod = [18, 12, 6]               # Capas ocultas encoder
+estructura_encod = [18, 72, 36, 18, 9, 6]               # Capas ocultas encoder
 estructura_decod = estructura_encod[::-1]      # Capas ocultas decoder
 
 lista_act_encod = [F.relu for i in range(len(estructura_encod))] + [None] # Funciones activacion encoder (None = [None,...,None] por defecto lineal en MLP)
@@ -39,25 +37,27 @@ lista_act_decod = [F.relu for i in range(len(estructura_decod))] + [None] # Func
 
 ## HIPERPARAMETROS de entrenamiento ##
 
-stp_n = 500     # Número de pasos de entrenamiento
-stp_sz = stp_sz = 0.001    # Tamaño del paso (learning rate)
+stp_n = 50000     # Número de pasos de entrenamiento
+stp_sz = 0.001    # Tamaño del paso (learning rate)
 batch_sz = 32  # Tamaño del batch (por defecto, todo el dataset)
 
 loss_f = F.mse_loss # Función de pérdida
-beta = 0.005
+beta = 0.0075
 lambda_l2 = 0.001
 
 ## DATOS de entrenamiento y test ##
-xs_train, ys_train, etiquetas_train, xs_test, ys_test, etiquetas_test = procesar_datos(archivo_set_train="datasets/nba_pergame_24_full.csv",
-                                                                                    archivo_set_test="datasets/nba_pergame_24_full.csv",
+archivo_entrenamiento = "datasets/nba_pergame_24_full.csv"
+archivo_test = "datasets/nba_pergame_24_full.csv"
+xs_train, ys_train, etiquetas_train, xs_test, ys_test, etiquetas_test = procesar_datos(archivo_set_train=archivo_entrenamiento,
+                                                                                    archivo_set_test=archivo_test,
                                                                                     modo_autoencoder=True,
                                                                                     modo_columnas="solo_volumen",
                                                                                     modo_targets="pos",
                                                                                     modo_etiquetado="posicion",
                                                                                     normalizar_datos=True,
                                                                                     modo_normalizacion="zscore",
-                                                                                    umbral_partidos=5,
-                                                                                    umbral_minutos=5,
+                                                                                    umbral_partidos=20,
+                                                                                    umbral_minutos=15,
                                                                                     umbral_en_test=True,
                                                                                     hay_fila_total_entrenamiento=False,
                                                                                     hay_fila_total_test=True)
@@ -76,8 +76,8 @@ if __name__ == "__main__":
     # Cargamos los MLP o los creamos si no existen
     if existen_MLP:
         # Cargar MLP existentes
-        encoder = cargar_MLP(archivo_encod)
-        decoder = cargar_MLP(archivo_decod)
+        encoder = cargar_modelo(archivo_encod)
+        decoder = cargar_modelo(archivo_decod)
     else:
         # Crear nuevos MLP para encoder y decoder
         encoder = MLP(input_sz, lat_spc_dim, estructura_encod, lista_act_encod)
@@ -113,9 +113,14 @@ if __name__ == "__main__":
     
 
     # Guardamos las redes segun eleccion
+    if añadir_descripcion:
+        autoencoder.description = descripcion
     if save_autoencoder:
-        guardar_autoencoder(autoencoder, archivo_autoencoder)
+        guardar_modelo(autoencoder, archivo_autoencoder)
         if save_encoder :
-            guardar_MLP(encoder, archivo_encod)
+            guardar_modelo(encoder, archivo_encod)
         if save_decoder:
-            guardar_MLP(decoder, archivo_decod) 
+            guardar_modelo(decoder, archivo_decod) 
+    else:
+        print(f"Se ha decidido no guardar la red {archivo_autoencoder}.\n")
+

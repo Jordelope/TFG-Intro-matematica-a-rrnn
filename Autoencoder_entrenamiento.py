@@ -1,12 +1,11 @@
 import torch
 import torch.nn.functional as F
-from MLP import MLP, cargar_MLP, guardar_MLP
-from Autoencoder import Autoencoder, cargar_autoencoder, guardar_autoencoder
+from MLP import MLP
+from Autoencoder import Autoencoder 
+from Guardar_Cargar import guardar_modelo, cargar_modelo
 from Procesar_datos import procesar_datos
 
-"""
-Duda existencial: loss_f(las de torch) calculan bien la perdida si le estamos pasando el batch no?
-"""
+
 
 ## Funciones relevantes ##
 
@@ -18,12 +17,6 @@ archivo_encod = r"redes_disponibles\visual_pruebas_dim6_enc.json"
 archivo_decod = r"redes_disponibles\visual_pruebas_dim6_dec.json"
 archivo_autoencoder = r"redes_disponibles\visual_pruebas_dim6_autoenc.json"
 
-## OPCIONES de guardado ##
-
-save_after_training = True  # En caso de True: se guarda cuando mejora el error respecto 
-override_guardado = True   # En caso de True: se guarda aunque no mejore el error (si el anterior es True)
-
-sobreescribir_submodelos = True # En caso de True: Se sobreescriben archivos de encoder y decoder.
 
 ## HIPERPARAMETROS de entrenamiento ##
 
@@ -35,18 +28,31 @@ loss_f = F.mse_loss # Función de pérdida
 beta = 0.005
 lambda_l2 = 0.001
 
+## OPCIONES de guardado ##
 
-## DATOS de entrenamiento y test ##
-xs_train,ys_train,etiquetas_train,_,xs_test,ys_test,etiquetas_test = procesar_datos(archivo_set_train="datasets/nba_pergame_24_full.csv",
-                                                                                    archivo_set_test="datasets/nba_pergame_24_full.csv",
-                                                                                    modo_autoencoder=False,
+save_after_training = True  # En caso de True: se guarda cuando mejora el error respecto 
+override_guardado = False   # En caso de True: se guarda aunque no mejore el error (si el anterior es True)
+
+sobreescribir_submodelos = True # En caso de True: Se sobreescriben archivos de encoder y decoder.
+
+descripcion = f"Entrenamiento de {stp_n} pasos de tamano {stp_sz} con funcion de perdida {loss_f.__name__} en batches de {batch_sz}."
+añadir_descripcion = True # Añade a la descripcion ya existente
+sustituir_desc = False    # CUIDADO, SI TRUE ELIMINA LA DESCRIPCIÓN YA EXISTENTE
+añadir_info_mejora = True # Añade informacion de como ha mejorado/empeorado el modelo sobre el test dado
+
+
+archivo_entrenamiento = "datasets/nba_pergame_24_full.csv"
+archivo_test = "datasets/nba_pergame_24_full.csv"
+xs_train, ys_train, etiquetas_train, xs_test, ys_test, etiquetas_test = procesar_datos(archivo_set_train=archivo_entrenamiento,
+                                                                                    archivo_set_test=archivo_test,
+                                                                                    modo_autoencoder=True,
                                                                                     modo_columnas="solo_volumen",
                                                                                     modo_targets="pos",
                                                                                     modo_etiquetado="posicion",
                                                                                     normalizar_datos=True,
                                                                                     modo_normalizacion="zscore",
-                                                                                    umbral_partidos=5,
-                                                                                    umbral_minutos=5,
+                                                                                    umbral_partidos=20,
+                                                                                    umbral_minutos=15,
                                                                                     umbral_en_test=True,
                                                                                     hay_fila_total_entrenamiento=False,
                                                                                     hay_fila_total_test=True)
@@ -61,7 +67,7 @@ if __name__ == "__main__":
     
     ## CARGAR red ##
     print(f"\nSe va entrenar el modelo '{archivo_autoencoder}'.")
-    NN = cargar_autoencoder(archivo_autoencoder)
+    NN = cargar_modelo(archivo_autoencoder)
 
     ## AVISOS ##
     if  save_after_training:
@@ -70,7 +76,9 @@ if __name__ == "__main__":
         else:
             print(f"\nAVISO: El modelo '{archivo_autoencoder}' se va a guardar.")
         if sobreescribir_submodelos:
-            print(f"\nAVISO: Se van a sobrescribir el encoder y decoder.\n")
+            print(f"\nAVISO: Se van a sobrescribir el encoder y decoder.")
+        if sustituir_desc:
+            print(f"\nAVISO: Se va a ELIMINAR la descripción existente y sustituir por la indicada.")
     else:
         print(f"\nAVISO: El modelo '{archivo_autoencoder}' no se va a guardar.")
 
@@ -96,14 +104,23 @@ if __name__ == "__main__":
     
     ## GUARDADO de la red en su archivo original ##
     if save_after_training:
+
+        if añadir_descripcion:
+            if añadir_info_mejora:
+                descripcion += f"\n El modelo ha mejorado de {loss_init} a {loss_final} sobre el test {archivo_test} tras entrenar con el dataset {archivo_entrenamiento}."
+            if sustituir_desc:
+                NN.description = descripcion
+            else:
+                NN.add_descript(descripcion)
+
         if loss_final < loss_init or override_guardado:
             
             print( f"El error del modelo '{archivo_autoencoder}' sobre el test ha mejorarado y por tanto la actualizamos.\n")
-            guardar_autoencoder(NN,archivo_autoencoder)
+            guardar_modelo(NN,archivo_autoencoder)
             
             if sobreescribir_submodelos:
-                guardar_MLP(NN.encoder,archivo_encod)
-                guardar_MLP(NN.decoder,archivo_decod)
+                guardar_modelo(NN.encoder,archivo_encod)
+                guardar_modelo(NN.decoder,archivo_decod)
         else:
             print( f"El error del modelo '{archivo_autoencoder}' sobre el test no ha mejorarado y por tanto NO la actualizamos.\n")
     else:
