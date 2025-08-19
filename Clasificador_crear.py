@@ -33,21 +33,21 @@ def onehot_to_long(targets: torch.Tensor) -> torch.Tensor:
 existe_encoder_suelto = False
 existe_mlp_clas_suelto = False
 
-archivo_encod =         r"redes_disponibles\encod_prueba_desc.json" 
-archivo_autoencoder =   r"redes_disponibles\autoen_prueba_desc.json"  # Si solo tenemos el archivo del autoencoder
-archivo_mlp_clas =      r"redes_disponibles\mlp_clas_prueba_desc.json" 
-archivo_clasificador =  r"redes_disponibles\clasificador_prueba_desc.json" 
+archivo_encod =         r"redes_disponibles\encod_prueba.json" 
+archivo_autoencoder =   r"redes_disponibles\intento_autoen_bueno.json"  # Si solo tenemos el archivo del autoencoder
+archivo_mlp_clas =      r"redes_disponibles\mlp_clas_prueba.json" 
+archivo_clasificador =  r"redes_disponibles\clasificador_prueba_bueno.json" 
 
 ## OPCIONES de entrenado y guardado ##
 save_clasificador = True
-save_mlp_clas = True   # RECOMENDACION: Dejar en False
+save_mlp_clas = False   # RECOMENDACION: Dejar en False
 save_encoder = False    # RECOMENDADCION: Dejar en False a menos que NO se tenga encoder independiente.
 
 train_clasificador = False
 
 
-añadir_descripcion = False  # Opción de añadir una descripción
-descripcion = ""
+añadir_descripcion = True  # Opción de añadir una descripción
+descripcion = "Clasificador para visualizar espacio latente de autoencoder bueno."
 
 
 ## ESTRUCTURA mlp_clasificador ##
