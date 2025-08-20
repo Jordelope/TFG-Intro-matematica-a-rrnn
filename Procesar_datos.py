@@ -31,9 +31,15 @@ def filtrar_repetidos(df):
         resultado = []
         if "Team" in df.columns:
             for nombre, grupo in df.groupby("Player"):
-                total_row = grupo[grupo["Team"] == "2TM"]
-                if not total_row.empty:
-                    resultado.append(total_row)
+                total_row_2 = grupo[grupo["Team"] == "2TM"]
+                total_row_3 = grupo[grupo["Team"] == "3TM"] # Revisar esto no falle
+                total_row_4 = grupo[grupo["Team"] == "4TM"] # Revisar esto no falle
+                if not total_row_2.empty:
+                    resultado.append(total_row_2)
+                elif not total_row_3.empty:
+                    resultado.append(total_row_3)
+                elif not total_row_4.empty:
+                    resultado.append(total_row_4)
                 else:
                     resultado.append(grupo.iloc[:1])
             return pd.concat(resultado)
