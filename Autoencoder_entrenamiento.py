@@ -13,36 +13,35 @@ from Procesar_datos import procesar_datos
 
 ## DATOS de red a entrenar ##
 
-archivo_encod = r"redes_disponibles\visual_pruebas_dim6_enc.json"
-archivo_decod = r"redes_disponibles\visual_pruebas_dim6_dec.json"
-archivo_autoencoder = r"redes_disponibles\visual_pruebas_dim6_autoenc.json"
-
+archivo_encod = r"redes_disponibles\encod_nba1.json" 
+archivo_decod = r"redes_disponibles\decod_nba1.json" 
+archivo_autoencoder =r"redes_disponibles\autoencoder_nba2_mejoras.json" 
 
 ## HIPERPARAMETROS de entrenamiento ##
 
-stp_n = 1000000     # Número de pasos de entrenamiento
-stp_sz = 0.0005    # Tamaño del paso (learning rate)
-batch_sz = None  # Tamaño del batch (por defecto si es None, todo el dataset)
+stp_n = 30000     # Número de pasos de entrenamiento
+stp_sz = 0.0025   # Tamaño del paso (learning rate)
+batch_sz = 32  # Tamaño del batch (por defecto si es None, todo el dataset)
 
 loss_f = F.mse_loss # Función de pérdida
-beta = 0.005
-lambda_l2 = 0.001
+beta = 1e-5
+lambda_l2 = 1e-5
 
 ## OPCIONES de guardado ##
 
 save_after_training = True  # En caso de True: se guarda cuando mejora el error respecto 
 override_guardado = False   # En caso de True: se guarda aunque no mejore el error (si el anterior es True)
 
-sobreescribir_submodelos = True # En caso de True: Se sobreescriben archivos de encoder y decoder.
+sobreescribir_submodelos = False # En caso de True: Se sobreescriben archivos de encoder y decoder.
 
-descripcion = f"Entrenamiento de {stp_n} pasos de tamano {stp_sz} con funcion de perdida {loss_f.__name__} en batches de {batch_sz}."
+descripcion = f" Entrenamiento de {stp_n} pasos de tamano {stp_sz} con funcion de perdida {loss_f.__name__} en batches de {batch_sz} y valores beta={beta}, lambda_l2={lambda_l2}.\n Establecemos umbrales de 8mpg y 20pj."
 añadir_descripcion = True # Añade a la descripcion ya existente
 sustituir_desc = False    # CUIDADO, SI TRUE ELIMINA LA DESCRIPCIÓN YA EXISTENTE
 añadir_info_mejora = True # Añade informacion de como ha mejorado/empeorado el modelo sobre el test dado
 
 
-archivo_entrenamiento = "datasets/nba_pergame_24_full.csv"
-archivo_test = "datasets/nba_pergame_24_full.csv"
+archivo_entrenamiento = r"datasets\nba\combined19_25_pergame_filtered.csv"
+archivo_test = r"datasets\equipos\roster_hawks_pergame_25.csv" # Seria ideal poner de test datos que no hubiera visto
 xs_train, ys_train, etiquetas_train, xs_test, ys_test, etiquetas_test = procesar_datos(archivo_set_train=archivo_entrenamiento,
                                                                                     archivo_set_test=archivo_test,
                                                                                     modo_autoencoder=True,
@@ -52,7 +51,7 @@ xs_train, ys_train, etiquetas_train, xs_test, ys_test, etiquetas_test = procesar
                                                                                     normalizar_datos=True,
                                                                                     modo_normalizacion="zscore",
                                                                                     umbral_partidos=20,
-                                                                                    umbral_minutos=15,
+                                                                                    umbral_minutos=8,
                                                                                     umbral_en_test=True,
                                                                                     hay_fila_total_entrenamiento=False,
                                                                                     hay_fila_total_test=True)

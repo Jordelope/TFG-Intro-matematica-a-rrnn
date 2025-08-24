@@ -28,7 +28,7 @@ def vector_a_clase(xs):
     return xs.argmax().item()
 
 ## NOMBRE Clasificador ##
-archivo_clasificador = r"redes_disponibles\clasificador_prueba_bueno.json"
+archivo_clasificador = r"redes_disponibles/clasificador_nba2_mejoras.json"
 ver_descripcion = True
 ver_solo_decision = True # Si es True veremos SOLO que clase asigna a los datos el clasificador. En caso contrario veremos las "Probabilidades".
 
@@ -39,8 +39,8 @@ modo_evaluacion = True
 xs_a_clasificar = None
 ys_para_evaluar = None
 
-archivo_entrenamiento = "datasets/nba_pergame_24_full.csv"
-archivo_test = r"datasets/nba_pergame_24_full.csv"
+archivo_entrenamiento = r"datasets\nba\combined19_25_pergame_filtered.csv"
+archivo_test = r"datasets\nba\nba24_25_pergame.csv"
 _, _, _, xs_a_clasificar, ys_para_evaluar, etiquetas_test = procesar_datos(archivo_set_train=archivo_entrenamiento,
                                                                                     archivo_set_test=archivo_test,
                                                                                     modo_autoencoder=False,
@@ -106,21 +106,21 @@ if __name__=="__main__":
         if visualizar_todos:
             visual(archivo_clasificador,xs_a_clasificar,dim_repr,clases_datos,titulo_grafico,"pca")
             if modo_evaluacion:
-                visual(archivo_clasificador,xs_a_clasificar,dim_repr,clases_test,"Clases test","pca")
+                visual(archivo_clasificador,xs_a_clasificar,dim_repr,etiquetas_test,"Clases test pca","pca")
             
             visual(archivo_clasificador,xs_a_clasificar,dim_repr,clases_datos,titulo_grafico,"tsne")
             if modo_evaluacion:
-                visual(archivo_clasificador,xs_a_clasificar,dim_repr,clases_test,"Clases test","tsne")
+                visual(archivo_clasificador,xs_a_clasificar,dim_repr,etiquetas_test,"Clases test tsne","tsne")
             
             visual(archivo_clasificador,xs_a_clasificar,dim_repr,clases_datos,titulo_grafico,"umap")
             if modo_evaluacion:
-                visual(archivo_clasificador,xs_a_clasificar,dim_repr,clases_test,"Clases test","umap")
+                visual(archivo_clasificador,xs_a_clasificar,dim_repr,etiquetas_test,"Clases test umap","umap")
         
 
         else:
             visual(archivo_clasificador,xs_a_clasificar,dim_repr,clases_datos,titulo_grafico,modo_redd_dim)
             if modo_evaluacion:
-                visual(archivo_clasificador,xs_a_clasificar,dim_repr,clases_test,"Clases test",modo_redd_dim)
+                visual(archivo_clasificador,xs_a_clasificar,dim_repr,etiquetas_test,f"Clases test {modo_redd_dim}",modo_redd_dim)
 
 
     

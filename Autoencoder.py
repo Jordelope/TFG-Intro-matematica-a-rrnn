@@ -5,11 +5,7 @@ from MLP import MLP, get_batches, guardar_MLP, cargar_MLP, nombre_a_func
 
 
 
-"""
 
-Fichero para probar posibles mejoras sin modificar el original que funciona correctamente.
-
-"""
 
 class Autoencoder:
     """
