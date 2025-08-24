@@ -182,6 +182,10 @@ def procesar_datos( archivo_set_train: str,
         if modo_etiquetado == "posicion":
             etiquetas_train = df_train_umbral["Pos"].tolist()
             etiquetas_test  = df_test_umbral["Pos"].tolist()
+            if hay_fila_total_entrenamiento:
+                etiquetas_train = etiquetas_train[:-1]
+            if hay_fila_total_test:
+                etiquetas_test = etiquetas_test[:-1]
 
         else:
             print(f"\nAVISO: No se reconoce el modo de etiquetado {modo_etiquetado}.\n")
