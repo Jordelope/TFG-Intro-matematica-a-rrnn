@@ -50,7 +50,7 @@ def completar_datasets(dataset1, dataset2, salida, clave="Player-additional",pri
         raise ValueError(f"'{clave}' no está en {dataset2}")
 
     # Detectar columnas duplicadas
-    columnas_comunes = [c for c in df1.columns if c in df2.columns and c != clave]
+    columnas_comunes = [c for c in df1.columns if c in df2.columns and c != clave and c != "Team"]
     if columnas_comunes:
         print(f"⚠ Aviso: Se encontraron columnas duplicadas {columnas_comunes}. "
               f"Se conservarán las del primer dataset ({dataset1}).")
@@ -58,7 +58,8 @@ def completar_datasets(dataset1, dataset2, salida, clave="Player-additional",pri
         df2 = df2.drop(columns=columnas_comunes)
 
     # Hacer merge en base a la clave
-    combinado = pd.merge(df1, df2, on=clave, how="inner")
+    print("Columnas de df2:", df2.columns.tolist())
+    combinado = pd.merge(df1, df2, on=[clave,"Team"], how="inner")
 
     # Guardar en CSV
     combinado.to_csv(salida, index=False)
@@ -148,7 +149,7 @@ combinar_pergame = False
 completar_temporadas = True
 
 if __name__=="__main__":
-
+    
     if combinar_pergame:
         combinar_varios_datasets_filtrando(lista_datsets_pg,archivo_salida_pg)
     
@@ -157,4 +158,4 @@ if __name__=="__main__":
             completar_datasets(lista_datsets_pg[i] , lista_datsets_adv[i] , archivos_salida_temporadas[i])
             completar_datasets(archivos_salida_temporadas[i] , lista_datasets_shtg[i] , archivos_salida_temporadas[i],"Player-additional",1)
 
-            
+    
