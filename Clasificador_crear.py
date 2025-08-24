@@ -33,10 +33,10 @@ def onehot_to_long(targets: torch.Tensor) -> torch.Tensor:
 existe_encoder_suelto = False
 existe_mlp_clas_suelto = False
 
-archivo_encod =         r"redes_disponibles\encod_prueba.json" 
-archivo_autoencoder =   r"redes_disponibles\intento_autoen_bueno.json"  # Si solo tenemos el archivo del autoencoder
-archivo_mlp_clas =      r"redes_disponibles\mlp_clas_prueba.json" 
-archivo_clasificador =  r"redes_disponibles\clasificador_prueba_bueno.json" 
+archivo_encod =         r"" 
+archivo_autoencoder =   r"redes_disponibles\autoencoder_nba2_mejoras.json"  # Si solo tenemos el archivo del autoencoder
+archivo_mlp_clas =      r"" 
+archivo_clasificador =  r"redes_disponibles/clasificador_nba2_mejoras.json" 
 
 ## OPCIONES de entrenado y guardado ##
 save_clasificador = True
@@ -47,7 +47,7 @@ train_clasificador = False
 
 
 añadir_descripcion = True  # Opción de añadir una descripción
-descripcion = "Clasificador para visualizar espacio latente de autoencoder bueno."
+descripcion = "Clasificador solo para visualizar espacio latente de autoencoder no lineal."
 
 
 ## ESTRUCTURA mlp_clasificador ##
@@ -59,7 +59,7 @@ lista_activaciones_mlp_clas = [torch.relu for i in range(len(estructura_oc_mlp_c
 
 ## HIPERPARAMETROS de entrenamiento ##
 
-stp_n = 1050             # Número de pasos de entrenamiento
+stp_n = 0             # Número de pasos de entrenamiento
 stp_sz = 0.001           # Tamaño del paso (learning rate)
 batch_sz = None          # Tamaño del batch (por defecto, todo el dataset)
 
@@ -67,8 +67,8 @@ loss_f = F.cross_entropy   # Función de pérdida
 
 
 ## DATOS de entrenamiento y test ##
-archivo_entrenamiento = "datasets/nba_pergame_24_full.csv"
-archivo_test = "datasets/nba_pergame_24_full.csv"
+archivo_entrenamiento = r"datasets\nba\combined19_25_pergame_filtered.csv"
+archivo_test = r"datasets\nba\nba24_25_pergame.csv"
 xs_train, ys_train, etiquetas_train, xs_test, ys_test, etiquetas_test = procesar_datos(archivo_set_train=archivo_entrenamiento,
                                                                                     archivo_set_test=archivo_test,
                                                                                     modo_autoencoder=False,

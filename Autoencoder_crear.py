@@ -9,9 +9,9 @@ from Procesar_datos import procesar_datos
 
 ## NOMBRE archivos (se tomaran los MLP si ya los tenemos) ##
 existen_MLP = False
-archivo_encod = r"redes_disponibles\encod_prueba_desc.json" 
-archivo_decod = r"redes_disponibles\decod_prueba_desc.json" 
-archivo_autoencoder = r"redes_disponibles\intento_bueno.json" 
+archivo_encod = r"redes_disponibles\encod_nba1.json" 
+archivo_decod = r"redes_disponibles\decod_nba1.json" 
+archivo_autoencoder = r"redes_disponibles\autoencoder_nba2_mejoras.json" 
 
 
 ## OPCIONES de entrenado y guardado ##
@@ -19,21 +19,21 @@ save_autoencoder = True
 save_decoder = False
 save_encoder = False
 
-train_autoencoder = True
+train_autoencoder = False
 
-añadir_descripcion = False  # Opción de añadir una descripción
-descripcion = ""
+añadir_descripcion = True  # Opción de añadir una descripción
+descripcion = " Autoencoder pequeno para probar no linealidad en las ocultas."
 
 ## ESTRUCTURA autoencoder (si no tenemos los MLP) ##
 
 input_sz = 18            # Número de entradas
-lat_spc_dim = 5                                    # Dimension espacio latente(salida encoder, entrada decoder)
-
-estructura_encod = [18, 72, 36, 18, 9, 6]               # Capas ocultas encoder
+lat_spc_dim = 8                                    # Dimension espacio latente(salida encoder, entrada decoder)
+#probar añadir una de 128 la primera(y ultima en decod)
+estructura_encod = [64,32]               # Capas ocultas encoder
 estructura_decod = estructura_encod[::-1]      # Capas ocultas decoder
 
-lista_act_encod = [F.relu for i in range(len(estructura_encod))] + [None] # Funciones activacion encoder (None = [None,...,None] por defecto lineal en MLP)
-lista_act_decod = [F.relu for i in range(len(estructura_decod))] + [None] # Funciones activacion encoder (None = [None,...,None] por defecto lineal en MLP)
+lista_act_encod = [F.relu, torch.tanh] + [None] # Funciones activacion encoder (None = [None,...,None] por defecto lineal en MLP)
+lista_act_decod = [torch.tanh, F.relu] + [None] # Funciones activacion encoder (None = [None,...,None] por defecto lineal en MLP)
 
 ## HIPERPARAMETROS de entrenamiento ##
 
@@ -46,8 +46,8 @@ beta = 0.0075
 lambda_l2 = 0.001
 
 ## DATOS de entrenamiento y test ##
-archivo_entrenamiento = "datasets/nba_pergame_24_full.csv"
-archivo_test = "datasets/nba_pergame_24_full.csv"
+archivo_entrenamiento = r"datasets\nba\combined19_25_pergame_filtered.csv"
+archivo_test = r"datasets\equipos\roster_hawks_pergame_25.csv" # Seria ideal poner de test datos que no hubiera visto
 xs_train, ys_train, etiquetas_train, xs_test, ys_test, etiquetas_test = procesar_datos(archivo_set_train=archivo_entrenamiento,
                                                                                     archivo_set_test=archivo_test,
                                                                                     modo_autoencoder=True,
